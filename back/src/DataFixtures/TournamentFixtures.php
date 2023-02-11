@@ -14,6 +14,9 @@ class TournamentFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $users = $manager->getRepository(User::class)->findAll();
+        $moderators = array_filter($users, function ($user) {
+            return in_array("ROLE_MODERATOR", $user->getRoles());
+        });
 
         $faker = Factory::create('fr_FR');
         
@@ -26,7 +29,7 @@ class TournamentFixtures extends Fixture implements DependentFixtureInterface
                 ->setName($faker->sentence(6, true))
                 ->setIsFree($faker->boolean(75))
                 ->setIsOver($faker->boolean(50))
-                ->setCreatedBy($faker->randomElement($users))
+                ->setCreatedBy($faker->randomElement($moderators))
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 years' , '-1 month')))
             ;
             $manager->persist($object);   
