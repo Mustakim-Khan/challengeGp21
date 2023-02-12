@@ -35,6 +35,7 @@ const store = createStore({
     articles: [],
     forums: [],
     comments: [],
+    tournaments: [],
   },
   mutations: {
     setStatus: (state, status) => {
@@ -72,6 +73,9 @@ const store = createStore({
     setComments: (state, comments) => {
       state.comments = comments;
     },
+    setTournaments: (state, tournaments) => {
+      state.tournaments = tournaments;
+    },
   },
   getters: {
     getStatus: (state) => {
@@ -91,6 +95,9 @@ const store = createStore({
     },
     getComments: (state) => {
       return state.comments;
+    },
+    getTournaments: (state) => {
+      return state.tournaments;
     },
   },
   actions: {
@@ -276,6 +283,19 @@ const store = createStore({
           .post("/comments", comment)
           .then((response) => {
             commit;
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    getAllTournaments: ({ commit }) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .get("/tournaments")
+          .then((response) => {
+            commit("setTournaments", response.data);
             resolve(response);
           })
           .catch((error) => {

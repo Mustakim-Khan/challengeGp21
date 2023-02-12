@@ -17,10 +17,13 @@ class TournamentFixtures extends Fixture implements DependentFixtureInterface
         $moderators = array_filter($users, function ($user) {
             return in_array("ROLE_MODERATOR", $user->getRoles());
         });
+        $nonAdminOrModeratorUsers = array_filter($users, function ($user) {
+            return in_array("ROLE_USER", $user->getRoles());
+        });
 
         $faker = Factory::create('fr_FR');
         
-        for ($nbArticle=0; $nbArticle < 20; $nbArticle++) { 
+        for ($nbTournament=0; $nbTournament < 20; $nbTournament++) {
             $deadline = $faker->dateTimeBetween('now', '+1 year');
             $object = (new Tournament())
                 ->setMaxPlayers($faker->numberBetween(4, 16))
@@ -32,6 +35,10 @@ class TournamentFixtures extends Fixture implements DependentFixtureInterface
                 ->setCreatedBy($faker->randomElement($moderators))
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 years' , '-1 month')))
             ;
+            $participants = $faker->randomElements($nonAdminOrModeratorUsers, 4);
+            foreach ($participants as $participant) {
+                $object->addParticipant($participant);
+            }
             $manager->persist($object);   
         }
 

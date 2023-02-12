@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
+import TournamentView from "../views/TournamentView.vue";
+import TournamentsView from "../views/TournamentsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DashboardView from "../views/Admin/DasboardView.vue";
 import AdminArticlesView from "../views/Admin/AdminArticlesView.vue";
@@ -84,6 +86,16 @@ const router = createRouter({
       path: "/register",
       name: "register",
       component: RegisterView,
+    },
+    {
+      path: "/tournaments",
+      name: "tournaments",
+      component: TournamentsView,
+    },
+    {
+      path: "/tournament/:id",
+      name: "tournament",
+      component: TournamentView,
     },
     {
       path: "/:pathMatch(.*)*",

@@ -38,6 +38,13 @@
         @click="navigateTo('forums')"
       >
       </v-list-item>
+      <v-list-item
+        prepend-icon="mdi-tournament"
+        title="Tournaments"
+        value="tournaments"
+        @click="navigateTo('tournaments')"
+      >
+      </v-list-item>
       <!-- TODO: verify if user is admin -->
       <v-list-item
         prepend-icon="mdi-monitor-dashboard"

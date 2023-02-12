@@ -8,49 +8,69 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Blameable;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read_Tournament']],
+    denormalizationContext: ['groups' => ['write_Tournament']]
+)]
 class Tournament
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['read_Tournament'])]
     private ?Uuid $id = null;
 
     #[ORM\Column]
+    #[Groups(['read_Tournament'])]
     private ?int $maxPlayers = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tournaments')]
+    #[Groups(['read_Tournament'])]
     private Collection $participants;
 
     #[ORM\Column]
+    #[Groups(['read_Tournament'])]
     private ?bool $isFree = null;
 
     #[ORM\Column]
+    #[Groups(['read_Tournament'])]
     private ?bool $isOver = null;
 
     #[ORM\ManyToOne(inversedBy: 'createdTournaments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read_Tournament'])]
+    #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\Column]
+    #[Groups(['read_Tournament'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Groups(['read_Tournament'])]
     private ?\DateTimeImmutable $participationDeadline = null;
 
     #[ORM\Column]
+    #[Groups(['read_Tournament'])]
     private ?\DateTimeImmutable $startAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read_Tournament'])]
     private ?string $name = null;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable("now", new \DateTimeZone("Europe/Paris"));
+        $this->isFree = false;
+        $this->isOver = false;
+
     }
 
     public function getId(): ?Uuid
