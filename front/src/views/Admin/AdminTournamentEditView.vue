@@ -6,6 +6,8 @@
     <v-form>
       <v-text-field label="Name" v-model="tournament.name" required></v-text-field>
       <v-text-field label="Max players" v-model="tournament.maxPlayers" type="number" required></v-text-field>
+      <v-text-field v-if="this.$route.params.id == 'new'" label="Partcipation deadline" v-model="tournament.participationDeadline" type="date" required></v-text-field>
+      <v-text-field v-if="this.$route.params.id == 'new'" label="Start date" v-model="tournament.startAt" type="datetime-local" required></v-text-field>
       <v-radio-group label="Free entry" v-model="tournament.isFree">
         <v-radio label="True" :value="true"></v-radio>
         <v-radio label="False" :value="false"></v-radio>
@@ -33,7 +35,7 @@ export default {
       isFree: false,
       isOver: false,
       participationDeadline: new Date(),
-      startAt: 0
+      startAt: new Date()
     },
   }),
   mounted() {

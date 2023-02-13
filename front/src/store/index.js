@@ -333,9 +333,22 @@ const store = createStore({
       });
     },
     createTournament: ({ commit }, tournament) => {
+      console.log({
+        name: tournament.name,
+        maxPlayers: tournament.maxPlayers,
+        participationDeadline: tournament.participationDeadline,
+        startAt: tournament.startAt,
+        isFree: tournament.isFree,
+      })
       return new Promise((resolve, reject) => {
         instance
-          .post("/tournaments", tournament)
+          .post("/tournaments", {
+            name: tournament.name,
+            maxPlayers: tournament.maxPlayers,
+            participationDeadline: tournament.participationDeadline,
+            startAt: tournament.startAt,
+            isFree: tournament.isFree,
+          })
           .then((response) => {
             commit;
             resolve(response);
