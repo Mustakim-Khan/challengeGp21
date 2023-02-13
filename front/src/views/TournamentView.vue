@@ -31,6 +31,7 @@
       </v-card-title>
       <v-card-actions class="float-right">
         <v-btn @click="joinTournament()">Join</v-btn>
+        <v-btn @click="sponsorTournament()">Sponsor</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -58,14 +59,18 @@ export default {
     back() {
       this.$router.go(-1);
     },
+    sponsorTournament() {
+      // TODO si l'utilisateur courant est un sponsor
+      console.log('sponsorTournament()')
+    },
     joinTournament() { 
-      // TODO si utilisateur courant n'est pas encore dans le tournoi
+      console.log('joinTournament()')
+      // TODO si utilisateur courant n'est pas encore dans le tournoi (admi et modo peuvent s'incrire)
       if (this.tournament.participants) {
         this.tournament.participants.forEach(p => {
           console.log(p)
         });
       }
-      // this.$router.go(-1);
     },
   },
 };

@@ -76,6 +76,9 @@ const store = createStore({
     setTournaments: (state, tournaments) => {
       state.tournaments = tournaments;
     },
+    deleteTournament: (state, tournament) => {
+      state.tournaments = state.tournaments.filter((t) => t.id !== tournament.id);
+    },
   },
   getters: {
     getStatus: (state) => {
@@ -256,7 +259,7 @@ const store = createStore({
         instance
           .delete("/forums/" + forum.id)
           .then((response) => {
-            commit("deleteForum", response);
+            commit("deleteForum", forum);
             resolve(response);
           })
           .catch((error) => {
@@ -296,6 +299,45 @@ const store = createStore({
           .get("/tournaments")
           .then((response) => {
             commit("setTournaments", response.data);
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    deleteTournament: ({ commit }, tournament) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .delete("/tournaments/" + tournament.id)
+          .then((response) => {
+            commit("deleteTournament", tournament);
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    updateTournament: ({ commit }, tournament) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .put("/tournaments/" + tournament.id, tournament)
+          .then((response) => {
+            commit;
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    createTournament: ({ commit }, tournament) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .post("/tournaments", tournament)
+          .then((response) => {
+            commit;
             resolve(response);
           })
           .catch((error) => {

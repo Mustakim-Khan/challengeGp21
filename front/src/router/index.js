@@ -6,7 +6,9 @@ import TournamentsView from "../views/TournamentsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DashboardView from "../views/Admin/DasboardView.vue";
 import AdminArticlesView from "../views/Admin/AdminArticlesView.vue";
+import AdminTournamentsView from "../views/Admin/AdminTournamentsView.vue";
 import AdminArticleEditView from "../views/Admin/AdminArticleEditView.vue";
+import AdminTournamentEditView from "../views/Admin/AdminTournamentEditView.vue";
 import ForumsView from "../views/ForumsView.vue";
 import ForumView from "../views/ForumView.vue";
 import AdminForumsView from "../views/Admin/AdminForumsView.vue";
@@ -88,6 +90,11 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: "/admin/tournaments",
+      name: "admin-tournaments",
+      component: AdminTournamentsView,
+    },
+    {
       path: "/tournaments",
       name: "tournaments",
       component: TournamentsView,
@@ -96,6 +103,11 @@ const router = createRouter({
       path: "/tournament/:id",
       name: "tournament",
       component: TournamentView,
+    },
+    {
+      path: "/admin/tournaments/:id",
+      name: "admin-tournament-edit",
+      component: AdminTournamentEditView,
     },
     {
       path: "/:pathMatch(.*)*",
