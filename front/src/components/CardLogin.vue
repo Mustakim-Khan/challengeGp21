@@ -49,9 +49,9 @@ export default {
     passwordRules: [(v) => !!v || "Password is required"],
   }),
   mounted() {
-    if (this.$store.state.user.id != "") {
+    /*if (this.$store.state.authToken != "") {
       this.$router.push({ name: "home" });
-    }
+    }*/
   },
 
   computed: {

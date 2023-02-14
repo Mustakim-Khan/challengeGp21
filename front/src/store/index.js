@@ -9,29 +9,18 @@ const instance = axios.create({
   },
 });
 
-let user = JSON.parse(localStorage.getItem("user"));
-if (!user) {
-  user = {
-    id: "",
-    token: "",
-  };
+let authToken = localStorage.getItem("authToken");
+
+if (!authToken) {
+  authToken = "";
 } else {
-  user = JSON.parse(user);
-  try {
-    instance.defaults.headers.common["Authorization"] = user.token; // TODO: Bearer
-  } catch (error) {
-    user = {
-      id: "",
-      token: "",
-    };
-  }
+  instance.defaults.headers.common["Authorization"] = "Bearer " + authToken; // TODO: Bearer
 }
 
 const store = createStore({
   state: {
     status: "",
-    user: user,
-    userInfo: {},
+    authToken: authToken,
     articles: [],
     forums: [],
     comments: [],
@@ -41,20 +30,15 @@ const store = createStore({
     setStatus: (state, status) => {
       state.status = status;
     },
-    logUser: (state, user) => {
-      state.user.id = user.id;
-      state.user.token = user.token;
-      instance.defaults.headers.common["Authorization"] = user.token; // TODO: Bearer
-      localStorage.setItem("user", JSON.stringify(user));
-    },
-    userInfo: (state, userInfo) => {
-      state.userInfo = userInfo;
+    logUser: (state, auth) => {
+      state.authToken = auth.token;
+      instance.defaults.headers.common["Authorization"] =
+        "Bearer " + state.authToken; // TODO: Bearer
+      localStorage.setItem("authToken", state.authToken);
     },
     logout: (state) => {
       // TODO: logout user
-      state.user.id = "";
-      state.user.token = "";
-      state.userInfo = {};
+      state.Authtoken = "";
       localStorage.removeItem("user");
       delete instance.defaults.headers.common["Authorization"];
     },
@@ -77,18 +61,17 @@ const store = createStore({
       state.tournaments = tournaments;
     },
     deleteTournament: (state, tournament) => {
-      state.tournaments = state.tournaments.filter((t) => t.id !== tournament.id);
+      state.tournaments = state.tournaments.filter(
+        (t) => t.id !== tournament.id
+      );
     },
   },
   getters: {
     getStatus: (state) => {
       return state.status;
     },
-    getUser: (state) => {
-      return state.user;
-    },
-    getUserInfo: (state) => {
-      return state.userInfo;
+    getAuthToken: (state) => {
+      return state.authToken;
     },
     getArticles: (state) => {
       return state.articles;
@@ -125,7 +108,7 @@ const store = createStore({
       commit("setStatus", "loading");
       return new Promise((resolve, reject) => {
         instance
-          .post("/api/users/login", userInfo)
+          .post("/login", userInfo)
           .then((response) => {
             commit("setStatus", "loggedIn");
             commit("logUser", response.data);
@@ -133,19 +116,6 @@ const store = createStore({
           })
           .catch((error) => {
             commit("setStatus", "errorLoggingIn");
-            reject(error);
-          });
-      });
-    },
-    getUserInfo: ({ commit }) => {
-      return new Promise((resolve, reject) => {
-        instance
-          .get("/users/info/")
-          .then((response) => {
-            resolve(response);
-            commit("userInfo", response.data);
-          })
-          .catch((error) => {
             reject(error);
           });
       });
@@ -339,7 +309,7 @@ const store = createStore({
         participationDeadline: tournament.participationDeadline,
         startAt: tournament.startAt,
         isFree: tournament.isFree,
-      })
+      });
       return new Promise((resolve, reject) => {
         instance
           .post("/tournaments", {
