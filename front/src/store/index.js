@@ -11,11 +11,14 @@ const instance = axios.create({
 
 let authToken = localStorage.getItem("authToken");
 
-if (!authToken) {
-  authToken = "";
-} else {
-  instance.defaults.headers.common["Authorization"] = "Bearer " + authToken; // TODO: Bearer
-}
+instance.interceptors.request.use((config) => {
+  if (!authToken) {
+    authToken = "";
+  } else {
+    config.headers.Authorization = `Bearer ${authToken}`;
+  }
+  return config;
+});
 
 const store = createStore({
   state: {
@@ -32,8 +35,6 @@ const store = createStore({
     },
     logUser: (state, auth) => {
       state.authToken = auth.token;
-      instance.defaults.headers.common["Authorization"] =
-        "Bearer " + state.authToken; // TODO: Bearer
       localStorage.setItem("authToken", state.authToken);
     },
     logout: (state) => {
@@ -92,7 +93,7 @@ const store = createStore({
       commit("setStatus", "loading");
       return new Promise((resolve, reject) => {
         instance
-          .post("/users", userInfo)
+          .post("/api/users", userInfo)
           .then((response) => {
             resolve(response);
             commit("setStatus", "createdAccount");
@@ -123,7 +124,7 @@ const store = createStore({
     getAllArticles: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance
-          .get("/articles")
+          .get("/api/articles")
           .then((response) => {
             commit("setArticles", response.data);
             resolve(response);
@@ -136,7 +137,7 @@ const store = createStore({
     updateArticle: ({ commit }, article) => {
       return new Promise((resolve, reject) => {
         instance
-          .put("/articles/" + article.id, article)
+          .put("/api/articles/" + article.id, article)
           .then((response) => {
             commit;
             resolve(response);
@@ -149,7 +150,7 @@ const store = createStore({
     createArticle: ({ commit }, article) => {
       return new Promise((resolve, reject) => {
         instance
-          .post("/articles", article)
+          .post("/api/articles", article)
           .then((response) => {
             commit;
             resolve(response);
@@ -162,7 +163,7 @@ const store = createStore({
     deleteArticle: ({ commit }, article) => {
       return new Promise((resolve, reject) => {
         instance
-          .delete("/articles/" + article.id)
+          .delete("/api/articles/" + article.id)
           .then((response) => {
             commit("deleteArticle", article);
             resolve(response);
@@ -175,7 +176,7 @@ const store = createStore({
     getAllForums: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance
-          .get("/forums")
+          .get("/api/forums")
           .then((response) => {
             commit("setForums", response.data);
             resolve(response);
@@ -188,7 +189,7 @@ const store = createStore({
     getValidForums: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance
-          .get("/forums?isValid=true")
+          .get("/api/forums?isValid=true")
           .then((response) => {
             commit("setForums", response.data);
             resolve(response);
@@ -201,7 +202,7 @@ const store = createStore({
     createForum: ({ commit }, forum) => {
       return new Promise((resolve, reject) => {
         instance
-          .post("/forums", forum)
+          .post("/api/forums", forum)
           .then((response) => {
             commit;
             resolve(response);
@@ -214,7 +215,7 @@ const store = createStore({
     updateForum: ({ commit }, forum) => {
       return new Promise((resolve, reject) => {
         instance
-          .put("/forums/" + forum.id, forum)
+          .put("/api/forums/" + forum.id, forum)
           .then((response) => {
             commit("setForums", response.data);
             resolve(response);
@@ -227,7 +228,7 @@ const store = createStore({
     deleteForum: ({ commit }, forum) => {
       return new Promise((resolve, reject) => {
         instance
-          .delete("/forums/" + forum.id)
+          .delete("/api/forums/" + forum.id)
           .then((response) => {
             commit("deleteForum", forum);
             resolve(response);
@@ -240,7 +241,7 @@ const store = createStore({
     getAllComments: ({ commit }, forumId) => {
       return new Promise((resolve, reject) => {
         instance
-          .get("/comments?forum=" + forumId)
+          .get("/api/comments?forum=" + forumId)
           .then((response) => {
             commit("setComments", response.data);
             resolve(response);
@@ -253,7 +254,7 @@ const store = createStore({
     createComment: ({ commit }, comment) => {
       return new Promise((resolve, reject) => {
         instance
-          .post("/comments", comment)
+          .post("/api/comments", comment)
           .then((response) => {
             commit;
             resolve(response);
@@ -266,7 +267,7 @@ const store = createStore({
     getAllTournaments: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance
-          .get("/tournaments")
+          .get("/api/tournaments")
           .then((response) => {
             commit("setTournaments", response.data);
             resolve(response);
@@ -279,7 +280,7 @@ const store = createStore({
     deleteTournament: ({ commit }, tournament) => {
       return new Promise((resolve, reject) => {
         instance
-          .delete("/tournaments/" + tournament.id)
+          .delete("/api/tournaments/" + tournament.id)
           .then((response) => {
             commit("deleteTournament", tournament);
             resolve(response);
@@ -292,7 +293,7 @@ const store = createStore({
     updateTournament: ({ commit }, tournament) => {
       return new Promise((resolve, reject) => {
         instance
-          .put("/tournaments/" + tournament.id, tournament)
+          .put("/api/tournaments/" + tournament.id, tournament)
           .then((response) => {
             commit;
             resolve(response);
@@ -312,7 +313,7 @@ const store = createStore({
       });
       return new Promise((resolve, reject) => {
         instance
-          .post("/tournaments", {
+          .post("/api/tournaments", {
             name: tournament.name,
             maxPlayers: tournament.maxPlayers,
             participationDeadline: tournament.participationDeadline,
