@@ -19,6 +19,12 @@
           title="Forums"
           @click="navigateTo('admin-forums')"
         ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-tournament"
+          append-icon="mdi-chevron-right"
+          title="Tournaments"
+          @click="navigateTo('admin-tournaments')"
+        ></v-list-item>
       </v-list>
     </v-card>
   </v-container>
