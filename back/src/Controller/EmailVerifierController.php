@@ -25,11 +25,6 @@ class EmailVerifierController extends AbstractController
     #[Route(
         name: 'verify_email',
         path: '/verify/email/{token}',
-        // methods: ['POST'],
-        // defaults: [
-        //     '_api_resource_class' => User::class,
-        //     '_api_operation_name' => '_api_/books/{id}/publication_post',
-        // ],
     )]
     public function __invoke($token)
     {
@@ -53,7 +48,8 @@ class EmailVerifierController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json('User verified');
+        // return $this->redirectToRoute("login",[],302);
+        return $this->json(array('res'=>true));
 
         // On génère un message
         // $this->addFlash('message', 'Utilisateur activé avec succès');

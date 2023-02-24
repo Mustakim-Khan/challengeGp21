@@ -52,7 +52,7 @@ class EmailVerifier
 
 
         
-        $emailContent = "<h1>Bonjour ****, veuillez confirmer votre e-mail</h1><p>
+        $emailContent = "<h1>Bonjour". $user->getUsername() .", veuillez confirmer votre e-mail</h1><p>
         Veuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : <br><br>";
         $emailContent .="<a href=". $url .">Confirmer mon e-mail</a>.";
         // $emailContent .= "Ce lien expire dans ". $context['expiresAtMessageData'].".";
@@ -60,10 +60,7 @@ class EmailVerifier
         // $email->context($context);
 
         $this->mailer->send($email);
-        $res = array();
-        $res['url'] = $url;
-        $res['res'] = true;
-        return json_encode($res);
+        return json_encode(array(['res'=>true]));
     }
 
     // /**

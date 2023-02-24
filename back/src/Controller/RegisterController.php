@@ -57,9 +57,9 @@ class RegisterController extends AbstractController
             (new Email())
                 // ->from(new Address('admin@festnib.com', 'festinb'))
                 ->from(new Address('from@example.com', 'Mailtrap'))
-                ->to('to@example.com')
+                ->to(new Address($email, $username))
                 ->subject('Please Confirm your Email')
-                ->html("<h1>Bonjour, veuillez confirmer votre e-mail</h1>")
+                // ->html("<h1>Bonjour, veuillez confirmer votre e-mail</h1>")
                 // ->htmlTemplate('front/registration/confirmation_email.html.twig')
         );
         // do anything else you need here, like send an email
@@ -78,6 +78,6 @@ class RegisterController extends AbstractController
         //     ->html(`<p> Bienvenue chez ... </p>{$username}`);
         // $this->mailer->send($email);
 
-        return $this->json('User registered. Check your mail for validation('.$emailResponse.').');
+        return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
     }
 }

@@ -37,10 +37,10 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[Post(
     name: 'user_register',
-    uriTemplate: 'register',
+    uriTemplate: '/register',
     controller: RegisterController::class,
     denormalizationContext: ['groups' => ['user_write']],
-    processor: UserPasswordHasher::class
+    processor: UserPasswordHasher::class,
 )]
 #[Put(
     denormalizationContext: ['groups' => ['user_update']],
