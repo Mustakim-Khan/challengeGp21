@@ -20,9 +20,9 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+        
         api:
-            pattern: ^/api/
+            pattern: ^/api
             stateless: true
             provider: users
             jwt: ~
@@ -34,7 +34,7 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
+            jwt: ~
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -48,7 +48,8 @@ security:
         - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
         - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
         - { path: ^/login, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
-        - { path: ^/register, methods: Post, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, methods: Post, roles: PUBLIC_ACCESS }
+        - { path: ^/api/verify/email/, methods: Get, roles: PUBLIC_ACCESS }
         - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
     
 
