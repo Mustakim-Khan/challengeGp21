@@ -75,6 +75,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
+            this.navigateTo("home");
           },
           (error) => {
             console.log(error);

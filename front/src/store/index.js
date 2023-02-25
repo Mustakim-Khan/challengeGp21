@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createStore } from "vuex";
 import axios from "axios";
 
@@ -22,6 +23,7 @@ instance.interceptors.request.use((config) => {
 
 const store = createStore({
   state: {
+    user: undefined,
     status: "",
     authToken: authToken,
     articles: [],
@@ -36,6 +38,8 @@ const store = createStore({
     logUser: (state, auth) => {
       state.authToken = auth.token;
       localStorage.setItem("authToken", state.authToken);
+      state.user = { username: "moufiduser" };
+      instance.defaults.headers.common["Authorization"] = `Bearer ${state.authToken}`;
     },
     logout: (state) => {
       // TODO: logout user
@@ -93,7 +97,7 @@ const store = createStore({
       commit("setStatus", "loading");
       return new Promise((resolve, reject) => {
         instance
-          .post("/api/users", userInfo)
+          .post("/api/register", userInfo)
           .then((response) => {
             resolve(response);
             commit("setStatus", "createdAccount");
