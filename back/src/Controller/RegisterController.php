@@ -12,7 +12,6 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Security\EmailVerifier;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 #[AsController]
 class RegisterController extends AbstractController
@@ -23,7 +22,6 @@ class RegisterController extends AbstractController
         private MailerInterface $mailer,
         private UserPasswordHasherInterface $passwordHasher,
         private EmailVerifier $emailVerifie,
-        // private UserAuthenticatorInterface $userAuthenticator,
     ) {}
 
     public function __invoke()
@@ -51,33 +49,14 @@ class RegisterController extends AbstractController
         $this->managerRegistry->getManager()->flush();
         
         $emailResponse = $this->emailVerifie->sendEmailConfirmation(
-            // 'verify_email',
             $user,
-            // (new TemplatedEmail())
             (new Email())
-                // ->from(new Address('admin@festnib.com', 'festinb'))
                 ->from(new Address('from@example.com', 'Mailtrap'))
                 ->to(new Address($email, $username))
                 ->subject('Please Confirm your Email')
                 // ->html("<h1>Bonjour, veuillez confirmer votre e-mail</h1>")
-                // ->htmlTemplate('front/registration/confirmation_email.html.twig')
+                // ->htmlTemplate('front/registration/confirmation_email.html.twig')json
         );
-        // do anything else you need here, like send an email
-
-        // return $this->userAuthenticator->authenticateUser(
-        //     $user,
-        //     $authenticator,
-        //     $this->requestStack->getCurrentRequest()
-        // );
-
-        // $email = (new Email())
-        //     ->from('moufid.moutarou.pro@gmail.com')
-        //     ->to('moufid.moutarou.pro@gmail.com')
-        //     ->subject('Bienvenue')
-        //     ->text('Bienvenue Sur ...')
-        //     ->html(`<p> Bienvenue chez ... </p>{$username}`);
-        // $this->mailer->send($email);
-
         return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
     }
 }
