@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Table(name: "`user`")]
 #[ApiResource]
 #[Get(
     normalizationContext: ['groups' => ['get_user']],
