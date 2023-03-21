@@ -27,15 +27,14 @@ final class ResetPasswordSubscriber implements EventSubscriberInterface{
     
     public function resetPwd(ViewEvent $event){
         $user = $event->getControllerResult();
-        
-        // Check is user exists
-        if(!$this->managerRegistry->getRepository(User::class)->findOneBy(['username' => $user->getUsername()])){
-            return;
-        }
         $method = $event->getRequest()->getMethod();
-
+        
         // Check if it's User instance and the request method is right
         if($user instanceof User && (Request::METHOD_PATCH === $method || Request::METHOD_PUT === $method)){
+            // Check is user exists
+            if(!$this->managerRegistry->getRepository(User::class)->findOneBy(['username' => $user->getUsername()])){
+                return;
+            }
             $plainPwd = $user->getPassword();
             // if($plainPwd){
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPwd);
