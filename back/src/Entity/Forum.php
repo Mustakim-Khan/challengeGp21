@@ -15,9 +15,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
+#[ApiResource(paginationEnabled: true)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Forum']],
-    denormalizationContext: ['groups' => ['write_Forum']]
+    denormalizationContext: ['groups' => ['write_Forum']],
+    paginationEnabled: true,
+    order: ['createdAt' => 'DESC'],
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'isValid' => 'exact',

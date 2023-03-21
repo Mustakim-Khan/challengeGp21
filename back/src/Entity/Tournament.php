@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -20,10 +22,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
+#[ApiResource(paginationEnabled: true)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Tournament']],
     denormalizationContext: ['groups' => ['write_Tournament']]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'maxPlayers' => 'exact',
+    'createdBy' => 'exact',
+    'isOver' => 'exact',
+    'isFree' => 'exact',
+])]
 class Tournament
 {
     #[ORM\Id]

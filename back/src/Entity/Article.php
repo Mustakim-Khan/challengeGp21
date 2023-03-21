@@ -12,10 +12,14 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationEnabled: true,
+    order: ['createdAt' => 'DESC'],
+)]
 #[Get(
     normalizationContext: ['groups' => ['get_article']],
     security: "is_granted('ROLE_MODERATOR') or object == user",

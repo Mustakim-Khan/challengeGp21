@@ -12,7 +12,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: ClipRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_CLip']],
-    denormalizationContext: ['groups' => ['write_Clip']]
+    denormalizationContext: ['groups' => ['write_Clip']],
+    order: ['createdAt' => 'DESC'],
 )]
 class Clip
 {

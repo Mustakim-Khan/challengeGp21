@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
@@ -25,7 +27,13 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "`user`")]
-#[ApiResource]
+#[ApiResource(
+    paginationEnabled: true,
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'username' => 'partial',
+    'email' => 'partial',
+])]
 #[Get(
     normalizationContext: ['groups' => ['get_user']],
     security: "is_granted('ROLE_MODERATOR') or object == user"
