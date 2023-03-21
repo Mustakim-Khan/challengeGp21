@@ -7,10 +7,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Security\EmailVerifier;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsController]
@@ -29,14 +31,16 @@ class RegisterController extends AbstractController
         $email = json_decode($this->requestStack->getCurrentRequest()->getContent())->email;        
         $username = json_decode($this->requestStack->getCurrentRequest()->getContent())->username;        
         if ($this->managerRegistry->getRepository(User::class)->findOneBy(['email' => $email, 'username' => $username])) {
-            throw $this->createNotFoundException();
+            // throw $this->createNotFoundException();
+            return $this->json("This email has already been registered");
         }
         
         $user = (new User())
-        ->setEmail($email)
-        ->setUsername($username)
+            ->setEmail($email)
+            ->setUsername($username)
         ;
         
+        // Remove hash pwd from here cause it already made in eventListener
         $plainPwd = json_decode($this->requestStack->getCurrentRequest()->getContent())->password;        
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
@@ -50,13 +54,14 @@ class RegisterController extends AbstractController
         
         $emailResponse = $this->emailVerifie->sendEmailConfirmation(
             $user,
-            (new Email())
-                ->from(new Address('from@example.com', 'Mailtrap'))
-                ->to(new Address($email, $username))
-                ->subject('Please Confirm your Email')
-                // ->html("<h1>Bonjour, veuillez confirmer votre e-mail</h1>")
+            ((new TemplatedEmail()))
+                ->from(new Address('noreply@discord-web.com', 'Discord Web'))
+                ->subject("Email Confirmation")
+                ->to($email)
+                // ->addTextHeader('templateId', 1)
                 // ->htmlTemplate('front/registration/confirmation_email.html.twig')json
         );
-        return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
+        return new RedirectResponse($this->getParameter('app.host_front') ."login");
+        // return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
     }
 }

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Security\EmailVerifier;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 #[AsController]
 class EmailVerifierController extends AbstractController
@@ -37,12 +38,13 @@ class EmailVerifierController extends AbstractController
         }
 
         // On supprime le token
-        // $user->setToken(null);
+        $user->setToken(null);
         $user->setIsVerify(true);
         $entityManager = $this->managerRegistry->getManager();
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(array('res'=>true));
+        return new RedirectResponse($this->getParameter('app.host_front') ."login");
+        // return $this->json(array('res'=>true));
     }
 }

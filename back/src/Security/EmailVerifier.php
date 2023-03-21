@@ -52,9 +52,8 @@ class EmailVerifier
 
 
         
-        $emailContent = "<h1>Bonjour". $user->getUsername() .", veuillez confirmer votre e-mail</h1><p>
-        Veuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : <br><br>";
-        $emailContent .="<a href=". $url .">Confirmer mon e-mail</a>.";
+        $emailContent = "<h1>Email confirmation</h1><p>Hello ". $user->getUsername(). ", ";
+        $emailContent .="<a href=". $url .">please Confirm your email</a>.";
         // $emailContent .= "Ce lien expire dans ". $context['expiresAtMessageData'].".";
         $email->html($emailContent);
         // $email->context($context);
