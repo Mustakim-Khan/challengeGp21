@@ -27,6 +27,7 @@ class SignaledComment
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['read_SignaledComment'])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'signaledComments')]

@@ -31,6 +31,7 @@ class Comment
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['read_Comment'])]
     private ?Uuid $id = null;
 
     #[ORM\Column]
