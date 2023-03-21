@@ -22,11 +22,21 @@
 
         <v-text-field
           v-model="password"
-          :rules="passwordRules"
+          :rules="[required, passwordField]"
           type="password"
           clearable
           label="Password"
           placeholder="Enter your password"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="cpassword"
+          :rules="[required, passwordField, matchingPasswords]"
+          type="password"
+          clearable
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          required
         ></v-text-field>
 
         <v-checkbox
@@ -45,7 +55,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="success" @click="createAccount"> createAccount </v-btn>
+        <v-btn color="success" @click="createAccount"> create Account </v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
@@ -63,10 +73,11 @@ export default {
       (v) => (v && v.length <= 10) || "Userame must be less than 10 characters",
     ],
     password: "",
-    passwordRules: [
-      (v) => !!v || "Password is required",
-      (v) => (v && v.length >= 8) || "Password must be equal or greater than 8",
-    ],
+    // passwordRules: [
+    //   (v) => !!v || "Password is required",
+    //   (v) => (v && v.length >= 8) || "Password must be equal or greater than 8",
+    // ],
+    cpassword: "",
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -79,8 +90,10 @@ export default {
     ...mapState(["status"]),
   },
   mounted() {
-    if (this.$store.state.user.id != "") {
-      this.$router.push({ name: "home" });
+    // if (this.$store.state.user.id != "") {
+    if (this.$store.state.user != undefined) {
+      console.log(`user : ${this.$store.state.user}`);
+      // this.$router.push({ name: "home" });
     }
   },
   methods: {
@@ -88,7 +101,11 @@ export default {
       const { valid } = await this.$refs.form.validate();
 
       if (valid) {
-        this.createAccount();
+        if (this.password !== this.cpassword) {
+          console.log(`${this.password} different ${this.cpassword}`);
+        } else {
+          this.createAccount();
+        }
       }
     },
     createAccount() {
@@ -102,11 +119,33 @@ export default {
         .then(
           (response) => {
             console.log(response);
+            this.navigateTo("login");
           },
           (error) => {
             console.log(error);
           }
         );
+    },
+    required(value) {
+      if (value) {
+        return true;
+      } else {
+        return "This field is required.";
+      }
+    },
+    passwordField(value) {
+      if (value.length >= 8 && value.length <= 20) {
+        return true;
+      } else {
+        return "Password should have more than 8 characters and les than 20.";
+      }
+    },
+    matchingPasswords() {
+      if (this.password === this.cpassword) {
+        return true;
+      } else {
+        return "Passwords does not match.";
+      }
     },
     navigateTo(route) {
       this.$router.push({ name: route });

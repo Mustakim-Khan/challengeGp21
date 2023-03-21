@@ -1,19 +1,17 @@
-FROM php:8.1.4-apache
+FROM php:8.1-fpm
 
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales apt-utils libicu-dev libpng-dev libxml2-dev libzip-dev libonig-dev libxslt-dev openssl acl;
-
-RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
-    mv composer.phar /usr/local/bin/composer
-
-RUN docker-php-ext-configure intl
-RUN apt-get install -y libpq-dev \
+RUN apt update \
+    && apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+    && docker-php-ext-install intl opcache pdo pdo_pgsql pgsql\
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install zip
 
-RUN docker-php-ext-install gd opcache intl zip calendar dom mbstring zip gd xsl
-RUN pecl install apcu && docker-php-ext-enable apcu
+WORKDIR /var/www/symfony_docker
 
-WORKDIR /var/www/html
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+RUN apt install symfony-cli
