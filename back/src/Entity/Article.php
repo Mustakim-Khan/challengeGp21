@@ -32,6 +32,7 @@ class Article
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['get_article', 'getc_article'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
