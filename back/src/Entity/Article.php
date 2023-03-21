@@ -22,13 +22,13 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[Get(
     normalizationContext: ['groups' => ['get_article']],
-    security: "is_granted('ROLE_MODERATOR') or object == user",
-    securityMessage: 'Sorry, but you are not the article owner.'
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
 )]
 #[GetCollection(
     normalizationContext: ['groups' => ['getc_article']],
-    security: "is_granted('ROLE_ADMIN')",
-    securityMessage: 'Sorry, but you are not the admin.'
+    //security: "is_granted('ROLE_ADMIN')",
+    //securityMessage: 'Sorry, but you are not the admin.'
 )]
 class Article
 {

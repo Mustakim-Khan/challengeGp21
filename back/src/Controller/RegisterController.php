@@ -61,7 +61,7 @@ class RegisterController extends AbstractController
                 // ->addTextHeader('templateId', 1)
                 // ->htmlTemplate('front/registration/confirmation_email.html.twig')json
         );
-        return new RedirectResponse($this->getParameter('app.host_front') ."login");
-        // return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
+        //return new RedirectResponse($this->getParameter('app.host_front') ."login");
+        return $this->json($username.' registered. Check your mail for validation('.$emailResponse.').');
     }
 }

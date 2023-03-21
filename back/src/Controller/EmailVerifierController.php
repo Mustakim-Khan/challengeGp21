@@ -30,7 +30,8 @@ class EmailVerifierController extends AbstractController
 
         // Si aucun utilisateur n'est associé à ce token
         if(!$user){
-            throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
+            //throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
+            return $this->json('Cet utilisateur n\'existe pas');
         }
         
         if($user->isIsVerify()){

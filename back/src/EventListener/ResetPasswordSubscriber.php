@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\EventListener;
 
 use ApiPlatform\Symfony\EventListener\EventPriorities;
 use App\Entity\User;
