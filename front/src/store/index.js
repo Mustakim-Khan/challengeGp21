@@ -38,14 +38,7 @@ const store = createStore({
     logUser: (state, auth) => {
       state.authToken = auth.token;
       localStorage.setItem("authToken", state.authToken);
-      state.user = { username: "moufiduser" };
       instance.defaults.headers.common["Authorization"] = `Bearer ${state.authToken}`;
-    },
-    logout: (state) => {
-      // TODO: logout user
-      state.Authtoken = "";
-      localStorage.removeItem("user");
-      delete instance.defaults.headers.common["Authorization"];
     },
     setArticles: (state, articles) => {
       state.articles = articles;
@@ -69,6 +62,9 @@ const store = createStore({
       state.tournaments = state.tournaments.filter(
         (t) => t.id !== tournament.id
       );
+    },
+    setAuthJWT: (state, token) => {
+      state.authToken = token;
     },
   },
   getters: {
@@ -124,6 +120,12 @@ const store = createStore({
             reject(error);
           });
       });
+    },
+    logout: ({commit}) => {
+      // TODO: logout user
+      commit("setAuthJWT", "");
+      localStorage.removeItem("authToken");
+      instance.defaults.headers.common["Authorization"] = "";
     },
     getAllArticles: ({ commit }) => {
       return new Promise((resolve, reject) => {
