@@ -12,7 +12,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: ClipRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_CLip']],
-    denormalizationContext: ['groups' => ['write_Clip']]
+    denormalizationContext: ['groups' => ['write_Clip']],
+    order: ['createdAt' => 'DESC'],
 )]
 class Clip
 {
@@ -20,6 +21,7 @@ class Clip
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['read_Clip'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]

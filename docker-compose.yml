@@ -31,15 +31,28 @@ services:
       - dev
 
   back:
-    build: php
-    container_name: back_challenge
+    container_name: php
+    build:
+      context: ./php
     ports:
-      - "8000:80"
+      - '9000:9000'
     volumes:
-      - ./php/vhosts:/etc/apache2/sites-enabled
-      - ./back:/var/www/html:rw
-    restart: always
+      - ./back:/var/www/symfony_docker
     depends_on:
+      - db
+    networks:
+      - dev
+
+  nginx:
+    container_name: nginx
+    image: nginx:stable-alpine
+    ports:
+      - '8000:80'
+    volumes:
+      - ./back:/var/www/symfony_docker
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - back
       - db
     networks:
       - dev

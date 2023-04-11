@@ -14,7 +14,7 @@ import ForumView from "../views/ForumView.vue";
 import AdminForumsView from "../views/Admin/AdminForumsView.vue";
 import AdminForumEditView from "../views/Admin/AdminForumEditView.vue";
 import ForumEdit from "../views/ForumEditView.vue";
-//import store from "../store";
+import store from "../store";
 
 // TODO: Login redirect
 const router = createRouter({
@@ -24,35 +24,67 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      /*redirect:
-        store.state.user.id == "" || store.state.user.token == ""
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
           ? "/login"
-          : "",*/
+          : "",
     },
     {
       path: "/admin",
       name: "admin",
       component: DashboardView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/articles",
       name: "admin-articles",
       component: AdminArticlesView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/articles/:id",
       name: "admin-article-edit",
       component: AdminArticleEditView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/forums",
       name: "admin-forums",
       component: AdminForumsView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/forums/:id",
       name: "admin-forum-edit",
       component: AdminForumEditView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/login",
@@ -63,51 +95,111 @@ const router = createRouter({
       path: "/article/:id",
       name: "article",
       component: () => import("../views/ArticleView.vue"),
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/articles",
       name: "articles",
       component: () => import("../views/ArticlesView.vue"),
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/forum/:id",
       name: "forum",
       component: ForumView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/forums",
       name: "forums",
       component: ForumsView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/forums/edit/:id",
       name: "forum-edit",
       component: ForumEdit,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/register",
       name: "register",
       component: RegisterView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/tournaments",
       name: "admin-tournaments",
       component: AdminTournamentsView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/tournaments",
       name: "tournaments",
       component: TournamentsView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/tournament/:id",
       name: "tournament",
       component: TournamentView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/admin/tournaments/:id",
       name: "admin-tournament-edit",
       component: AdminTournamentEditView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
     },
     {
       path: "/:pathMatch(.*)*",

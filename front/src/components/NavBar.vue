@@ -9,10 +9,15 @@
 
     <v-spacer></v-spacer>
 
-    <!-- TODO: check if user is connect display login / logout -->
-    <v-btn icon @click="navigateTo('login')">
-      <v-icon>mdi-account-circle</v-icon>
-    </v-btn>
+    <div v-if="isRouteLogin">
+      <v-btn icon @click="navigateTo('login')">
+        <v-icon>mdi-account-circle</v-icon>
+      </v-btn>
+
+      <v-btn icon @click="logout">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+    </div>
   </v-app-bar>
 
   <v-navigation-drawer v-model="drawer" temporary>
@@ -62,6 +67,7 @@
 export default {
   data: () => ({
     drawer: false,
+    isRouteLogin: false,
   }),
   methods: {
     navigateTo(route) {
@@ -69,7 +75,14 @@ export default {
     },
     logout() {
       this.$store.dispatch("logout");
+      this.navigateTo("login");
     },
+    setIsRouteLogin() {
+      this.isRouteLogin = this.$route.name == "login";
+    },
+  },
+  mounted() {
+    this.setIsRouteLogin();
   },
 };
 </script>

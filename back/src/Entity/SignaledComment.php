@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\SignaledCommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
@@ -12,14 +14,20 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: SignaledCommentRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_SignaledComment']],
-    denormalizationContext: ['groups' => ['write_SignaledComment']]
+    denormalizationContext: ['groups' => ['write_SignaledComment']],
+    paginationEnabled: true,
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'signaledUser' => 'exact',
+    'signaledBy' => 'exact',
+])]
 class SignaledComment
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['read_SignaledComment'])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'signaledComments')]

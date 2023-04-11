@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Controller\EmailVerifierController;
 use App\Controller\RegisterController;
 use App\Controller\ResetPasswordController;
 use App\Repository\UserRepository;
@@ -25,8 +26,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-#[ApiResource]
+#[ORM\Table(name: "`user`")]
+#[ApiResource(
+    paginationEnabled: true,
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'username' => 'partial',
+    'email' => 'partial',
+])]
 #[Get(
     normalizationContext: ['groups' => ['get_user']],
     security: "is_granted('ROLE_MODERATOR') or object == user"
@@ -37,27 +44,29 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[Post(
     name: 'user_register',
-    uriTemplate: 'register',
+    uriTemplate: '/register',
     controller: RegisterController::class,
-    denormalizationContext: ['groups' => ['user_write']],
-    processor: UserPasswordHasher::class
+    denormalizationContext: ['groups' => ['write_user']],
+    processor: UserPasswordHasher::class,
 )]
 #[Put(
-    denormalizationContext: ['groups' => ['user_update']],
+    denormalizationContext: ['groups' => ['update_user']],
     security: "is_granted('ROLE_ADMIN') or object == user",
-    processor: UserPasswordHasher::class
+    securityMessage: 'Sorry, but you have a right for this action.'
 )]
 #[Patch(
-    denormalizationContext: ['groups' => ['user_update']],
+    denormalizationContext: ['groups' => ['update_user']],
     security: "is_granted('ROLE_ADMIN') or object == user",
-    )]
+    securityMessage: 'Sorry, but you have a right for this action.'
+)]
 #[Patch(
     name: 'reset_password',
     uriTemplate: 'users/{id}/reset/password',
     controller: ResetPasswordController::class,
-    denormalizationContext: ['groups' => ['userp_update']],
+    denormalizationContext: ['groups' => ['updatePwd_user']],
     processor: UserPasswordHasher::class,
     security: "is_granted('ROLE_ADMIN') or object == user",
+    securityMessage: 'Sorry, but you have a right for this action.'
 )]
 
 #[UniqueEntity('username', message: 'Ce nom d\'utilisateur {{ value }} existe déjà.')]
@@ -73,7 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     #[ORM\Column(length: 180, unique: true)]
     #[Asserts\NotBlank()]
-    #[Groups(['get_user', 'user_write', 'getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
+    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
     private ?string $username = null;
     
     #[ORM\Column]
@@ -83,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(['getc_user', 'user_write', 'user_update', 'userp_update'])]
+    #[Groups(['getc_user', 'write_user', 'update_user', 'updatePwd_user'])]
     private ?string $password = null;
     
     #[ORM\Column(length: 255, nullable: true)]
@@ -91,7 +100,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $token = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_user', 'user_write', 'user_update'])]
+    #[Groups(['get_user', 'write_user', 'update_user'])]
     private ?string $email = null;
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Comment::class)]
