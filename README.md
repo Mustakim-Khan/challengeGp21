@@ -8,6 +8,9 @@ $ docker compose up -d --build
 Install the dependencies in front and back in the container docker
 
 ### Back 
+
+Create .env.local and change values
+
 ```bash
 $ docker compose exec back /bin/bash
 $ composer install
@@ -15,8 +18,6 @@ $ php bin/console d:m:m
 $ php bin/console d:f:l
 $ apt-get install acl
 $ php bin/console lexik:jwt:generate-keypair
-$ setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
-$ setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
 ```
 > Go to : http://localhost:8000/api
 
