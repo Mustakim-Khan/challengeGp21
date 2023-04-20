@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Get;
@@ -30,6 +31,22 @@ use Symfony\Component\Uid\Uuid;
     //security: "is_granted('ROLE_ADMIN')",
     //securityMessage: 'Sorry, but you are not the admin.'
 )]
+#[Post(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
 class Article
 {
     #[ORM\Id]
@@ -40,11 +57,11 @@ class Article
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'post_article'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'post_article'])]
     private ?string $content = null;
 
     #[ORM\Column]
