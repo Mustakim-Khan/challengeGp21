@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Get;
@@ -13,7 +14,6 @@ use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Link;
 use Gedmo\Mapping\Annotation\Blameable;
 
@@ -22,13 +22,11 @@ use Gedmo\Mapping\Annotation\Blameable;
     denormalizationContext: ['groups' => ['write_article']],
     // paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
-)]
-#[ApiResource(
     uriVariables: [
-    'userId' => new Link(
-        fromClass: User::class,
-        fromProperty: 'articles'
-    )],
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'articles'
+        )],
 )]
 #[Get(normalizationContext: ['groups' => ['get_article']],)]
 #[GetCollection(normalizationContext: ['groups' => ['getc_article']],)]
@@ -38,13 +36,25 @@ use Gedmo\Mapping\Annotation\Blameable;
     security: "is_granted('ROLE_MODERATOR') or object == user",
     securityMessage: 'Sorry, but you are not the article owner.'
 )]
-#[Post(
-    denormalizationContext: ['groups' => ['write_article']],
-)]
 #[Patch(
     denormalizationContext: ['groups' => ['update_article']],
 )]
-#[Delete()]
+#[Post(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
 class Article
 {
     #[ORM\Id]
@@ -55,11 +65,11 @@ class Article
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
+    #[Groups(['get_article', 'getc_article', 'update_article', 'user:articles','post_article'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
+    #[Groups(['get_article', 'getc_article', 'update_article', 'user:articles','post_article'])]
     private ?string $content = null;
 
     #[ORM\Column]
