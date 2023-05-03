@@ -72,10 +72,15 @@ export default {
       this.$router.go(-1);
     },
     createComment() {
-      this.$store.dispatch("createComment", {
-        content: this.comment,
-        forum: "/api/forums/" + this.$route.params.id,
-      });
+      this.$store
+        .dispatch("createComment", {
+          content: this.comment,
+          forum: "/api/forums/" + this.$route.params.id,
+        })
+        .then((response) => {
+          this.forum.comments.push(response.data);
+          this.comment = "";
+        });
     },
   },
 };
