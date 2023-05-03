@@ -76,7 +76,7 @@ export default {
     createComment() {
       this.$store.dispatch("createComment", {
         content: this.comment,
-        forum: "/forums/" + this.$route.params.id,
+        forum: "/api/forums/" + this.$route.params.id,
       });
     },
   },

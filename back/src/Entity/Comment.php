@@ -5,12 +5,15 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation\Blameable;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
@@ -21,6 +24,22 @@ use Symfony\Component\Uid\Uuid;
     denormalizationContext: ['groups' => ['write_Comment']],
     paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
+)]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read_Comments']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Get(
+    normalizationContext: ['groups' => ['read_Comment']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Post(
+    normalizationContext: ['groups' => ['read_Comment']],
+    denormalizationContext: ['groups' => ['write_Comment']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'forum' => 'exact',
@@ -35,22 +54,22 @@ class Comment
     private ?Uuid $id = null;
 
     #[ORM\Column]
-    #[Groups(['read_Comment'])]
+    #[Groups(['read_Comment', 'read_Comments'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment'])]
-    #[Blameable(on: 'create')]
+    #[Groups(['read_Comment', 'read_Comments'])]
+    #[Gedmo\Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment', 'write_Comment'])]
+    #[Groups(['read_Comment', 'write_Comment', 'read_Comments'])]
     private ?Forum $forum = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Comment', 'write_Comment'])]
+    #[Groups(['read_Comment', 'write_Comment', 'read_Comments'])]
     private ?string $content = null;
 
     #[ORM\OneToMany(mappedBy: 'comment', targetEntity: SignaledComment::class)]
