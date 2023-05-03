@@ -192,6 +192,19 @@ const store = createStore({
           });
       });
     },
+    getForum: ({ commit }, forumId) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .get("/api/forums/" + forumId)
+          .then((response) => {
+            commit;
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
     getValidForums: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance

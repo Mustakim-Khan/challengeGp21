@@ -18,9 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
-#[ApiResource(paginationEnabled: true)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read_Comment']],
+    normalizationContext: ['groups' => ['read_Comment', 'read_Forum', 'read_Forums']],
     denormalizationContext: ['groups' => ['write_Comment']],
     paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
@@ -50,7 +49,7 @@ class Comment
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Comment'])]
+    #[Groups(['read_Comment', 'read_Forum'])]
     private ?Uuid $id = null;
 
     #[ORM\Column]
@@ -59,7 +58,7 @@ class Comment
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment', 'read_Comments'])]
+    #[Groups(['read_Comment', 'read_Comments', 'read_Forum'])]
     #[Gedmo\Blameable(on: 'create')]
     private ?User $createdBy = null;
 
@@ -69,7 +68,7 @@ class Comment
     private ?Forum $forum = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Comment', 'write_Comment', 'read_Comments'])]
+    #[Groups(['read_Comment', 'write_Comment', 'read_Comments', 'read_Forum'])]
     private ?string $content = null;
 
     #[ORM\OneToMany(mappedBy: 'comment', targetEntity: SignaledComment::class)]
