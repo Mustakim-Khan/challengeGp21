@@ -80,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ApiProperty(identifier: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
+    #[Groups(['getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'getc_article'])]
     private ?Uuid $id = null;
     
     #[ORM\Column(length: 180, unique: true)]

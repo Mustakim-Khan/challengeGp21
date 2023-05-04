@@ -13,6 +13,9 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
 use ApiPlatform\Metadata\Link;
 use Gedmo\Mapping\Annotation\Blameable;
@@ -74,6 +77,7 @@ class Article
 
     #[ORM\Column]
     #[Groups(['get_article', 'getc_article', 'user:articles'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC822])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
