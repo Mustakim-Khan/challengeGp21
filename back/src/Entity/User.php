@@ -85,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     #[ORM\Column(length: 180, unique: true)]
     #[Asserts\NotBlank()]
-    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'get_article', 'getc_article', 'read_Comments'])]
+    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum','read_Forums', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'get_article', 'getc_article', 'read_Comments'])]
     private ?string $username = null;
     
     #[ORM\Column]

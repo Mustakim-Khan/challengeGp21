@@ -15,7 +15,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
@@ -73,7 +75,8 @@ class Forum
     private ?User $createdBy = null;
 
     #[ORM\Column]
-    #[Groups(['read_Forum'])]
+    #[Groups(['read_Forum', 'read_Forums'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC822])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
