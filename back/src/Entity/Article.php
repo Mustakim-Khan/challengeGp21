@@ -14,6 +14,8 @@ use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -66,6 +68,7 @@ class Article
 
     #[ORM\Column]
     #[Groups(['get_article', 'getc_article'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC822])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
