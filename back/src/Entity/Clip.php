@@ -31,11 +31,8 @@ class Clip
     #[Groups(['read_Clip', 'write_Clip'])]
     private ?string $path = null;
 
-    #[Vich\UploadableField(mapping: 'clip', fileNameProperty: 'path', size: 'fileSize')]
+    #[Vich\UploadableField(mapping: 'clip', fileNameProperty: 'path')]
     private ?File $file = null;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $fileSize = null;
 
     #[ORM\ManyToOne(inversedBy: 'clips')]
     #[ORM\JoinColumn(nullable: false)]
@@ -134,18 +131,6 @@ class Clip
     public function setFile(File $file) : self
     {
         $this->file = $file;
-
-        return $this;
-    }
-
-    public function getFileSize() : ?int
-    {
-        return $this->fileSize;
-    }
-
-    public function setFileSize(int $fileSize) : self
-    {
-        $this->fileSize = $fileSize;
 
         return $this;
     }
