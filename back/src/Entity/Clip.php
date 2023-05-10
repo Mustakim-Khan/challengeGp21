@@ -8,8 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use Vich\UploaderBundle\Entity\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ClipRepository::class)]
+#[Vich\Uploadable]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_CLip']],
     denormalizationContext: ['groups' => ['write_Clip']],
@@ -27,6 +30,12 @@ class Clip
     #[ORM\Column(length: 255)]
     #[Groups(['read_Clip', 'write_Clip'])]
     private ?string $path = null;
+
+    #[Vich\UploadableField(mapping: 'clip', fileNameProperty: 'path', size: 'fileSize')]
+    private ?File $file = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $fileSize = null;
 
     #[ORM\ManyToOne(inversedBy: 'clips')]
     #[ORM\JoinColumn(nullable: false)]
@@ -113,6 +122,30 @@ class Clip
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getFile() : ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(File $file) : self
+    {
+        $this->file = $file;
+
+        return $this;
+    }
+
+    public function getFileSize() : ?int
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(int $fileSize) : self
+    {
+        $this->fileSize = $fileSize;
 
         return $this;
     }
