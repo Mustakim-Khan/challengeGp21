@@ -11,6 +11,9 @@ RUN apt update \
 
 WORKDIR /var/www/symfony_docker
 
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+    && echo "upload_max_filesize = 500M" >> /usr/local/etc/php/php.ini
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
