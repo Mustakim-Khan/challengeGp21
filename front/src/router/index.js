@@ -15,6 +15,7 @@ import AdminForumsView from "../views/Admin/AdminForumsView.vue";
 import AdminForumEditView from "../views/Admin/AdminForumEditView.vue";
 import ForumEdit from "../views/ForumEditView.vue";
 import ArticleEdit from "../views/ArticleEditView.vue";
+import ClipsView from "../views/ClipsView.vue";
 import store from "../store";
 
 function adminRouteGuard(to, from, next) {
@@ -209,6 +210,19 @@ const router = createRouter({
       path: "/tournament/:id",
       name: "tournament",
       component: TournamentView,
+      beforeEnter: (to, from, next) => {
+        store.dispatch("fetchAccessToken");
+        if (store.state.authToken == null || store.state.user == null) {
+          next("/login");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/clips",
+      name: "clips",
+      component: ClipsView,
       beforeEnter: (to, from, next) => {
         store.dispatch("fetchAccessToken");
         if (store.state.authToken == null || store.state.user == null) {

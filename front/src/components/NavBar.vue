@@ -110,6 +110,13 @@
           @click="navigateTo('tournaments')"
         >
         </v-list-item>
+        <v-list-item
+          prepend-icon="mdi-video"
+          title="Clips"
+          value="clips"
+          @click="navigateTo('clips')"
+        >
+        </v-list-item>
         <!-- TODO: verify if user is admin -->
         <v-list-item
           prepend-icon="mdi-monitor-dashboard"
@@ -190,7 +197,6 @@ export default {
     } else {
       this.user = null;
     }
-
   },
 };
 </script>

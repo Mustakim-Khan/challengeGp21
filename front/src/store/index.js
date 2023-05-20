@@ -77,6 +77,7 @@ const store = createStore({
     forums: [],
     comments: [],
     tournaments: [],
+    clips: [],
   },
   mutations: {
     setStatus: (state, status) => {
@@ -155,6 +156,9 @@ const store = createStore({
     setAuthJWT: (state, token) => {
       state.authToken = token;
     },
+    setClips: (state, clips) => {
+      state.clips = clips;
+    },
   },
   getters: {
     getStatus: (state) => {
@@ -196,6 +200,9 @@ const store = createStore({
     getTournaments: (state) => {
       return state.tournaments;
     },
+    getClips: (state) => {
+      return state.clips;
+    }
   },
   actions: {
     createAccount: ({ commit }, userInfo) => {
@@ -560,6 +567,19 @@ const store = createStore({
           })
           .then((response) => {
             commit;
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    getAllClip: ({ commit }) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .get("/api/clips")
+          .then((response) => {
+            commit("setClips", response.data);
             resolve(response);
           })
           .catch((error) => {
