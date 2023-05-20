@@ -15,6 +15,10 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import "@vueup/vue-quill/dist/vue-quill.bubble.css";
 import { QuillEditor } from "@vueup/vue-quill";
 
+// video player
+import VueVideoPlayer from "@videojs-player/vue";
+import "video.js/dist/video-js.css";
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -27,6 +31,8 @@ app.use(router);
 app.use(store);
 
 app.use(vuetify);
+
+app.use(VueVideoPlayer);
 
 app.component("QuillEditor", QuillEditor);
 

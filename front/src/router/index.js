@@ -14,6 +14,7 @@ import ForumView from "../views/ForumView.vue";
 import AdminForumsView from "../views/Admin/AdminForumsView.vue";
 import AdminForumEditView from "../views/Admin/AdminForumEditView.vue";
 import ForumEdit from "../views/ForumEditView.vue";
+import ClipsView from "../views/ClipsView.vue";
 import store from "../store";
 
 // TODO: Login redirect
@@ -194,6 +195,17 @@ const router = createRouter({
       path: "/admin/tournaments/:id",
       name: "admin-tournament-edit",
       component: AdminTournamentEditView,
+      redirect:
+        store.state.authToken == "" ||
+        store.state.authToken === null ||
+        store.state.authToken === undefined
+          ? "/login"
+          : "",
+    },
+    {
+      path: "/clips",
+      name: "clips",
+      component: ClipsView,
       redirect:
         store.state.authToken == "" ||
         store.state.authToken === null ||

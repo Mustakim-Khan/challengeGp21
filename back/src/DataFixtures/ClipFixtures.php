@@ -20,7 +20,7 @@ class ClipFixtures extends Fixture implements DependentFixtureInterface
         for ($nbClip=0; $nbClip < 20; $nbClip++) { 
             $object = (new Clip())
                 ->setTitle($faker->sentence(6, true))
-                ->setPath('https://www.youtube.com/watch?v=QH2-TGUlwu4')
+                ->setPath('https://media.istockphoto.com/id/969555230/fr/vid%C3%A9o/asiatiques-jeunes-adultes-jouant-au-basketball-sur-cour-ext%C3%A9rieure.mp4?s=mp4-640x640-is&k=20&c=6_S-POjBTlYq4DxgXOMFyuCmHSqqYz7-rmRziGzAfpw=')
                 ->setUploadedBy($faker->randomElement($users))
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 year', 'now')))
             ;

@@ -33,6 +33,21 @@
         </template>
       </SliderItem>
     </div>
+
+    <div v-if="this.forums.length > 0">
+      <SliderItem title="New clips" :items="getClipsOrder()" linkMore="clips">
+        <template v-slot:sliderContent="{ item, selectedClass }">
+          <video-player
+            :class="['ma-4', selectedClass]"
+            :src="item.path"
+            controls
+            disablePictureInPicture
+            responsive
+            height="200"
+          />
+        </template>
+      </SliderItem>
+    </div>
   </v-container>
 </template>
 
@@ -47,6 +62,7 @@ export default {
     return {
       articles: [],
       forums: [],
+      clips: [],
     };
   },
   components: { CardArticle, SliderItem, CardForum },
@@ -57,9 +73,12 @@ export default {
     this.$store.dispatch("getValidForums").then(() => {
       this.forums = this.getForums;
     });
+    this.$store.dispatch("getAllClip").then(() => {
+      this.clips = this.getClips;
+    });
   },
   computed: {
-    ...mapGetters(["getArticles", "getForums"]),
+    ...mapGetters(["getArticles", "getForums", "getClips"]),
   },
   methods: {
     getArticlesOrder() {
@@ -67,7 +86,7 @@ export default {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
 
-      return articlesSorted.slice(0, 10);
+      return articlesSorted.slice(0, 5);
     },
     getForumsOrder() {
       if (this.forums.length > 0) {
@@ -75,7 +94,16 @@ export default {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
-        return forumsSorted.slice(0, 10);
+        return forumsSorted.slice(0, 5);
+      }
+    },
+    getClipsOrder() {
+      if (this.clips.length > 0) {
+        const clipsSorted = this.clips.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        return clipsSorted.slice(0, 5);
       }
     },
     navigate(route) {
