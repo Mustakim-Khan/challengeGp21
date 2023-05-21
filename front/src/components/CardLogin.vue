@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="valid" lazy-validation>
+  <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validate">
     <v-card class="mx-auto" max-width="500">
       <v-card-title class="text-h6 font-weight-regular justify-space-between">
         <span>Login</span>
@@ -10,6 +10,7 @@
           :rules="usernameRules"
           label="Username"
           required
+          autofocus
         ></v-text-field>
 
         <v-text-field
@@ -30,7 +31,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="success" @click="validate"> Login </v-btn>
+        <v-btn color="success" type="submit"> Login </v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
@@ -38,10 +39,10 @@
 
 <script>
 import { mapState } from "vuex";
+import jwtDecode from "jwt-decode";
 
 export default {
   data: () => ({
-    mode: "login",
     valid: true,
     username: "",
     usernameRules: [(v) => !!v || "Username is required"],
@@ -49,9 +50,9 @@ export default {
     passwordRules: [(v) => !!v || "Password is required"],
   }),
   mounted() {
-    /*if (this.$store.state.authToken != "") {
-      this.$router.push({ name: "home" });
-    }*/
+    // if (this.$store.state.authToken != "") {
+    //   this.$router.push({ name: "home" });
+    // }
   },
 
   computed: {
@@ -73,8 +74,17 @@ export default {
           password: this.password,
         })
         .then(
-          (response) => {
-            console.log(response);
+          () => {
+            this.$store.dispatch("fetchAccessToken");
+            const userDecode = jwtDecode(this.$store.state.authToken);
+            this.username = userDecode ? userDecode.username : "John Doe";
+            this.$store.dispatch("updateCurrentUser", userDecode);
+            console.log("---------");
+            console.log(`Login.vue | Logged | UserDecode => ${userDecode}`);
+            console.log(
+              `Login.vue | Logged | User => ${this.username} | state => ${this.$store.getters.getCurrentUser}`
+            );
+            console.log("---------");
             this.navigateTo("home");
           },
           (error) => {
@@ -88,3 +98,9 @@ export default {
   },
 };
 </script>
+
+<!-- Fait
+ - Mettre à jour l'utilisateur avec le token :
+    - Decode token and update user
+
+-->
