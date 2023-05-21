@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-final class ResetPasswordSubscriber implements EventSubscriberInterface{
+class UserPasswordEncoderListener implements EventSubscriberInterface{
     public function __construct(
         private ManagerRegistry $managerRegistry,
         private UserPasswordHasherInterface $passwordHasher,
@@ -28,7 +28,7 @@ final class ResetPasswordSubscriber implements EventSubscriberInterface{
     public function resetPwd(ViewEvent $event){
         $user = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
-        
+
         // Check if it's User instance and the request method is right
         if($user instanceof User && (Request::METHOD_PATCH === $method || Request::METHOD_PUT === $method)){
             // Check is user exists
@@ -36,10 +36,8 @@ final class ResetPasswordSubscriber implements EventSubscriberInterface{
                 return;
             }
             $plainPwd = $user->getPassword();
-            // if($plainPwd){
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPwd);
             $user->setPassword($hashedPassword);
-            // }
         }
     }
 }
