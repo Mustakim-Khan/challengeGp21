@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-btn @click="navigate('forums')" color="teal accent-4 mb-5"> Back </v-btn>
+    <v-btn @click="back()" color="teal accent-4 mb-5"> Back </v-btn>
     <v-form>
       <v-text-field label="Title" v-model="forum.title" required></v-text-field>
       <QuillEditor
@@ -56,6 +56,9 @@ export default {
       this.$store.dispatch("updateForum", this.forum).then(() => {
         this.navigate("forums");
       });
+    },
+    back() {
+      this.$router.go(-1);
     },
   },
 };

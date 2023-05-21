@@ -5,14 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Link;
 use App\Repository\TournamentRepository;
-use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -25,7 +20,19 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(paginationEnabled: true)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Tournament']],
-    denormalizationContext: ['groups' => ['write_Tournament']]
+    denormalizationContext: ['groups' => ['write_Tournament']],
+    uriVariables: [
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'createdTournaments'
+        )
+    ],
+)]
+#[GetCollection(
+    uriTemplate: '/users/{userId}/tournaments.{_format}',
+    normalizationContext: ['groups' => ['user:tournaments'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the owner.'
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'maxPlayers' => 'exact',
@@ -43,41 +50,41 @@ class Tournament
     private ?Uuid $id = null;
 
     #[ORM\Column]
-    #[Groups(['read_Tournament', 'write_Tournament'])]
+    #[Groups(['read_Tournament', 'write_Tournament', 'user:tournaments'])]
     private ?int $maxPlayers = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tournaments')]
-    #[Groups(['read_Tournament'])]
+    #[Groups(['read_Tournament', 'user:tournaments'])]
     private Collection $participants;
 
     #[ORM\Column]
-    #[Groups(['read_Tournament', 'write_Tournament'])]
+    #[Groups(['read_Tournament', 'write_Tournament', 'user:tournaments'])]
     private ?bool $isFree = true;
 
     #[ORM\Column]
-    #[Groups(['read_Tournament'])]
+    #[Groups(['read_Tournament', 'user:tournaments'])]
     private ?bool $isOver = false;
 
     #[ORM\ManyToOne(inversedBy: 'createdTournaments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Tournament'])]
+    #[Groups(['read_Tournament', 'user:tournaments'])]
     #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\Column]
-    #[Groups(['read_Tournament'])]
+    #[Groups(['read_Tournament', 'user:tournaments'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    #[Groups(['read_Tournament', 'write_Tournament'])]
+    #[Groups(['read_Tournament', 'write_Tournament', 'user:tournaments'])]
     private ?\DateTimeImmutable $participationDeadline = null;
 
     #[ORM\Column]
-    #[Groups(['read_Tournament', 'write_Tournament'])]
+    #[Groups(['read_Tournament', 'write_Tournament', 'user:tournaments'])]
     private ?\DateTimeImmutable $startAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read_Tournament', 'write_Tournament'])]
+    #[Groups(['read_Tournament', 'write_Tournament', 'user:tournaments'])]
     private ?string $name = null;
 
     public function __construct()

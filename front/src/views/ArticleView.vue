@@ -23,10 +23,20 @@ export default {
     article: {},
   }),
   mounted() {
-    this.$store.dispatch("getAllArticles");
-    this.article = this.getArticles.find(
-      (article) => article.id == this.$route.params.id
+    this.$store.dispatch("getAllArticles").then((response) => {
+      if (response) {
+        this.article = response.data.find(
+          (article) => article.id == this.$route.params.id
+        );
+      }
+    });
+    console.log(
+      "Article view | Mounted | this.getArticles => ",
+      this.getArticles
     );
+    // this.article = this.getArticles.find(
+    //   (article) => article.id == this.$route.params.id
+    // );
   },
   computed: {
     ...mapGetters(["getArticles"]),
