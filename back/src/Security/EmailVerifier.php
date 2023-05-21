@@ -3,63 +3,38 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Services\EmailSender;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\HttpFoundation\Request;
-// use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
-// use Symfony\Component\Routing\Generator\UrlGenerator;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class EmailVerifier
 {
     public function __construct(
-        private VerifyEmailHelperInterface $helper,
         private MailerInterface $mailer,
+        private EmailSender $emailSender,
         private EntityManagerInterface $manager,
         private UrlGeneratorInterface $urlGenerator,
     )
     {}
 
-    // public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
-    // public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, Email $email): void
-    public function sendEmailConfirmation(User $user, Email $email)
+    public function sendEmailConfirmation(User $user)
     {
-        $userEmail = $user->getEmail();
-        $userId = $user->getId();
-        $userToken = $user->getToken();
-
-        // $signatureComponents = $this->verifyEmailHelper->generateSignature(
-        //     $verifyEmailRouteName,
-        //     $userId,
-        //     $userEmail
-        // );
-        // $context = $email->getContext();array
-
         $url = $this->urlGenerator->generate('verify_email', [
-            // 'id' => $user->getId(),
-            'token' => $userToken,
+            'token' => $user->getToken(),
         ], 0);
+
+        $this->emailSender->send($user, array(
+            'subject' => 'Confirmation : Account created',
+            'templateID' => 'CRP',
+            'context' => [
+                'username' => $user->getUsername(),
+                'url' => $url,
+            ]
+        ));
         
-        // $context = array();
-        // $context['signedUrl'] = $signatureComponents->getSignedUrl();
-        // $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
-        // $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
-
-
-        
-        $emailContent = "<h1>Email confirmation</h1><p>Hello ". $user->getUsername(). ", ";
-        $emailContent .="<a href=". $url .">please Confirm your email</a>.";
-        // $emailContent .= "Ce lien expire dans ". $context['expiresAtMessageData'].".";
-        $email->html($emailContent);
-        // $email->context($context);
-
-        $this->mailer->send($email);
-        return json_encode(array(['res'=>true]));
+        return json_encode(true, 200);
     }
 
     // /**

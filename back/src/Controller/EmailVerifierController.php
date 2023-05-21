@@ -29,15 +29,11 @@ class EmailVerifierController extends AbstractController
         $user = $this->managerRegistry->getRepository(User::class)->findOneBy(['token' => $token]);
 
         // Si aucun utilisateur n'est associé à ce token
-        if(!$user){
-            //throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
-            return $this->json('Cet utilisateur n\'existe pas');
+        if(!$user || !$user->isIsVerify()){
+            // throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
+            return $this->json(false);
         }
         
-        if($user->isIsVerify()){
-            return $this->json('User is already verified');
-        }
-
         // On supprime le token
         $user->setToken(null);
         $user->setIsVerify(true);
@@ -45,7 +41,7 @@ class EmailVerifierController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new RedirectResponse($this->getParameter('app.host_front') ."login");
-        // return $this->json(array('res'=>true));
+        // return new RedirectResponse($this->getParameter('app.host_front') ."login");
+        return $this->json(true);
     }
 }
