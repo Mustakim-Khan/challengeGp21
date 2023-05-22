@@ -25,11 +25,13 @@ use Gedmo\Mapping\Annotation\Blameable;
     denormalizationContext: ['groups' => ['write_article']],
     // paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
+)]
+#[ApiResource(
     uriVariables: [
-        'userId' => new Link(
-            fromClass: User::class,
-            fromProperty: 'articles'
-        )],
+    'userId' => new Link(
+        fromClass: User::class,
+        fromProperty: 'articles'
+    )],
 )]
 #[Get(normalizationContext: ['groups' => ['get_article']],)]
 #[GetCollection(normalizationContext: ['groups' => ['getc_article']],)]
