@@ -47,6 +47,22 @@ use Symfony\Component\Uid\Uuid;
     //security: "is_granted('ROLE_MODERATOR') or object == user",
     //securityMessage: 'Sorry, but you are not the article owner.'
 )]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read_Comments']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Get(
+    normalizationContext: ['groups' => ['read_Comment']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Post(
+    normalizationContext: ['groups' => ['read_Comment']],
+    denormalizationContext: ['groups' => ['write_Comment']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
 #[ApiFilter(SearchFilter::class, properties: [
     'forum' => 'exact',
 ])]
