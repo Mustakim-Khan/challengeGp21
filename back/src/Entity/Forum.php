@@ -6,22 +6,25 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ForumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
-#[ApiResource(paginationEnabled: false)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Forum']],
     denormalizationContext: ['groups' => ['write_Forum']],
-    // paginationEnabled: true,
+    paginationEnabled: false,
     order: ['createdAt' => 'DESC'],
     uriVariables: [
         'userId' => new Link(
@@ -29,6 +32,38 @@ use ApiPlatform\Metadata\GetCollection;
             fromProperty: 'forums'
         )
     ],
+)]
+#[Get(
+    normalizationContext: ['groups' => ['read_Forum']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read_Forums']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Post(
+    normalizationContext: ['groups' => ['read_Forum']],
+    denormalizationContext: ['groups' => ['write_Forum']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Get(
+    normalizationContext: ['groups' => ['read_Forum']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read_Forums']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
+)]
+#[Post(
+    normalizationContext: ['groups' => ['read_Forum']],
+    denormalizationContext: ['groups' => ['write_Forum']],
+    //security: "is_granted('ROLE_MODERATOR') or object == user",
+    //securityMessage: 'Sorry, but you are not the article owner.'
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'isValid' => 'exact',
@@ -46,25 +81,27 @@ class Forum
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Forum', 'user:forums'])]
+    #[Groups(['read_Forum', 'user:forums', 'read_Forums'])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'forums')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Forum', 'user:forums'])]
+    #[Groups(['read_Forum', 'user:forums', 'read_Forums'])]
     #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\Column]
-    #[Groups(['read_Forum'])]
+    #[Groups(['read_Forum', 'read_Forums'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC822])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read_Forum', 'read_Comment', 'write_Forum', 'user:forums'])]
+    #[Groups(['read_Forum', 'read_Comment', 'write_Forum', 'user:forums', 'read_Forums'])]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Groups(['read_Forum','write_Forum', 'user:forums'])]
+    #[Groups(['read_Forum','write_Forum', 'user:forums', 'read_Forums'])]
+
     private ?bool $isValid = false;
 
     #[ORM\OneToMany(mappedBy: 'forum', targetEntity: Comment::class)]
