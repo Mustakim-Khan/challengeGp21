@@ -17,7 +17,6 @@ const decryptToken = async function () {
       refreshTokenDecoded: refreshToken,
     };
   } catch (error) {
-    // console.log({ errorMessage: error.message });
     return {
       tokenDecoded: token,
       userDecoded: null,

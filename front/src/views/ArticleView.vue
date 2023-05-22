@@ -30,10 +30,6 @@ export default {
         );
       }
     });
-    console.log(
-      "Article view | Mounted | this.getArticles => ",
-      this.getArticles
-    );
     // this.article = this.getArticles.find(
     //   (article) => article.id == this.$route.params.id
     // );

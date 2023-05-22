@@ -55,15 +55,12 @@ export default {
   }),
   methods: {
     addItem() {
-      // console.log("Add => ", this.datas.tablesContents);
       this.$router.push({
         name: this.datas.routes.editRouteName,
         params: { id: "new" },
       });
     },
     viewItem(item) {
-      // console.log("View | item.id => ", item.datas.id);
-      // console.log("View | item.routes => ", this.datas.routes.viewRouteName);
       this.$router.push({
         name: this.datas.routes.viewRouteName,
         params: { id: item.datas.id },
@@ -71,7 +68,6 @@ export default {
       });
     },
     editItem(item) {
-      console.log("Edit => ", item);
       this.$router.push({
         name: this.datas.routes.editRouteName,
         params: { id: item.datas.id },
@@ -83,7 +79,6 @@ export default {
         (data) => data.datas.id == item.datas.id
       )[0].datas;
 
-      console.log("crud delete | data => ", itemObject.title);
       confirm("Are you sure you want to delete this item?") &&
         this.$store
           .dispatch(this.datas.routes.deleteAction, itemObject)

@@ -1,9 +1,8 @@
 <script setup>
 import { RouterView } from "vue-router"; // <--- import RouterLink
 import NavBar from "./components/NavBar.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import jwtDecode from "jwt-decode";
 
 const store = useStore();
 let user = ref(null);
@@ -24,34 +23,14 @@ onMounted(() => {
     if (uD != null && typeof uD != "string") {
       // Set this user
       // user = uD;
-      console.log("App.vue | Mounted | User value updated => ", user);
     } else {
-      const uD = jwtDecode(this.$store.state.authToken);
+      //const uD = jwtDecode(this.$store.state.authToken);
       store.dispatch("updateCurrentUser", user.value);
-      console.log(
-        "App.vue | Mounted | User value => ",
-        user.value,
-        " \n\t\t uD => ",
-        uD
-      );
     }
     user = uD;
   }
   if (user != null && typeof user != "string") {
     store.dispatch("updateCurrentUser", user.value);
-  }
-});
-
-watch([user], ([user], [prevUser]) => {
-  if (user != null && typeof user != "string") {
-    if (user !== prevUser) {
-      console.log(
-        "App.vue | prevUser : ",
-        prevUser,
-        " \n\t\t newUser : ",
-        user
-      );
-    }
   }
 });
 </script>

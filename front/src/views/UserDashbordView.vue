@@ -277,7 +277,6 @@ export default {
     },
   },
   mounted() {
-    console.log("UserDashBoard | Mounted ...");
     this.$store
       .dispatch("updateUserDatas", {
         username: this.$store.getters.getCurrentUser.username,
@@ -290,21 +289,6 @@ export default {
           this.dispatchUserComments(this.$store.getters.getCurrentUser.id);
         }
       });
-    console.log("UserDashBoard | Mounted | My user datas set updated !");
-  },
-  watch: {
-    myArticles(newValue, oldValue) {
-      console.log(
-        "UserDashbord | Watch | myArticles have been updated | New value => ",
-        newValue
-      );
-    },
-    myForums(newValue, oldValue) {
-      console.log(
-        "UserDashbord | Watch | myForums have been updated | New value => ",
-        newValue
-      );
-    },
   },
 };
 </script>

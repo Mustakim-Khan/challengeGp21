@@ -92,9 +92,6 @@ export default {
         this.$store.dispatch("getValidForums").then(() => {
           this.forums = this.getForums;
         });
-        console.log(`Home.vue | Mounted | User updated => ${this.user}`);
-      } else {
-        console.log(`Home.vue | Mounted (Null user))| User => ${this.user}`);
       }
     },
   },

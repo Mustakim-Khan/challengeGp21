@@ -22,7 +22,6 @@ instance.interceptors.response.use(
       refresh == false &&
       localStorage.getItem("refreshToken")
     ) {
-      console.log("Token expired. Refreshing token ...");
       // Delete authorisation
       delete instance.defaults.headers.common["Authorization"];
       // Fetch refresh token route
@@ -40,15 +39,9 @@ instance.interceptors.response.use(
         error.config.headers["Authorization"] = `Bearer ${data.token}`;
         // update data in storage
         localStorage.setItem("authToken", data.token);
-        console.log("Error config => ", error.config);
-        console.log(
-          "Error config token => ",
-          error.config.headers["Authorization"]
-        );
         // const { status, data } = await instance.post("/api/token/refresh", {
         //   refresh_token: localStorage.getItem("refreshToken"),
         // });
-        console.log("Refresh token done.");
         // Execute last request
         return instance(error.config);
       }
@@ -61,7 +54,6 @@ instance.interceptors.response.use(
 // Fetch current user and his token
 let { tokenDecoded, userDecoded, refreshTokenDecoded } = await decryptToken();
 
-console.log(`Store data | User => ${userDecoded}`);
 instance.interceptors.request.use((config) => {
   if (tokenDecoded) {
     config.headers.Authorization = `Bearer ${tokenDecoded}`;
@@ -175,7 +167,6 @@ const store = createStore({
       return state.user;
     },
     getUserDatas: (state) => {
-      console.log("STORE (getUserDatas) | ", state.userDatas);
       return state.userDatas ? state.userDatas : null;
     },
     getUserArticles: (state) => {
@@ -256,11 +247,9 @@ const store = createStore({
       commit("updateUserToken", res);
     },
     updateCurrentUser: ({ commit }, data) => {
-      console.log(`Store (updateCurrentUser) | new user => ${data}`);
       commit("setUser", data);
     },
     updateUserDatas: ({ commit }, userInfo) => {
-      // console.log(`STORE (updateUserDatas) | userInfo => ${userInfo.username}`);
       return new Promise((resolve, reject) => {
         instance
           .get(`/api/users?username=${userInfo.username}`)
@@ -364,12 +353,6 @@ const store = createStore({
           });
       });
     },
-    logout: ({commit}) => {
-      // TODO: logout user
-      commit("setAuthJWT", "");
-      localStorage.removeItem("authToken");
-      instance.defaults.headers.common["Authorization"] = "";
-    },
     getAllArticles: ({ commit }) => {
       return new Promise((resolve, reject) => {
         instance
@@ -401,7 +384,6 @@ const store = createStore({
         instance
           .post("/api/articles", article)
           .then((response) => {
-            console.log("Create Article => ", response.data);
             commit;
             resolve(response);
           })
@@ -567,13 +549,6 @@ const store = createStore({
       });
     },
     createTournament: ({ commit }, tournament) => {
-      console.log({
-        name: tournament.name,
-        maxPlayers: tournament.maxPlayers,
-        participationDeadline: tournament.participationDeadline,
-        startAt: tournament.startAt,
-        isFree: tournament.isFree,
-      });
       return new Promise((resolve, reject) => {
         instance
           .post("/api/tournaments", {

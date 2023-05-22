@@ -61,10 +61,6 @@ export default {
     },
     validate() {
       if (this.$route.params.id == "new") {
-        console.log(
-          "Article Edit View | validate (new Item) | this.article => ",
-          this.article
-        );
         this.$store.dispatch("createArticle", this.article).then(() => {
           this.navigate("user-dashboard");
         });
