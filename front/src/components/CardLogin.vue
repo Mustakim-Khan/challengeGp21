@@ -67,7 +67,6 @@ export default {
       }
     },
     login() {
-      // TODO: Login
       this.$store
         .dispatch("login", {
           username: this.username,
@@ -79,12 +78,7 @@ export default {
             const userDecode = jwtDecode(this.$store.state.authToken);
             this.username = userDecode ? userDecode.username : "John Doe";
             this.$store.dispatch("updateCurrentUser", userDecode);
-            console.log("---------");
-            console.log(`Login.vue | Logged | UserDecode => ${userDecode}`);
-            console.log(
-              `Login.vue | Logged | User => ${this.username} | state => ${this.$store.getters.getCurrentUser}`
-            );
-            console.log("---------");
+
             this.navigateTo("home");
           },
           (error) => {

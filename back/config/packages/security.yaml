@@ -59,6 +59,7 @@ security:
         - { path: ^/api/register, methods: Post, roles: PUBLIC_ACCESS }
         - { path: ^/api/verify/email/, methods: Get, roles: PUBLIC_ACCESS }
         - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
+
     
 
 when@test:

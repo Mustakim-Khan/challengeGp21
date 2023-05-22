@@ -151,9 +151,6 @@ export default {
       this.user = null;
       this.$store.dispatch("logout").then(this.$router.push({ name: "login" }));
       this.$store.dispatch("updateCurrentUser", null);
-      console.log(
-        `NAVBAR | Logout Done | this.user : ${this.user} | state.user => ${this.$store.getters.getCurrentUser}`
-      );
     },
   },
   created() {
@@ -180,9 +177,6 @@ export default {
     } else {
       this.user = null;
     }
-    console.log(
-      `NAVBAR | Created | this.user/state.user/isLoggin =>${this.user}/${this.$store.getters.getCurrentUser}/${this.isLoggin}`
-    );
   },
   mounted() {
     this.$store.dispatch("fetchAccessToken");
@@ -196,9 +190,7 @@ export default {
     } else {
       this.user = null;
     }
-    console.log(
-      `NAVBAR | Mounted | this.user/state.user =>${this.user}/${this.$store.getters.getCurrentUser}`
-    );
+
   },
 };
 </script>

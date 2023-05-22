@@ -160,6 +160,9 @@ const store = createStore({
         (t) => t.id !== tournament.id
       );
     },
+    setAuthJWT: (state, token) => {
+      state.authToken = token;
+    },
   },
   getters: {
     getStatus: (state) => {
@@ -360,6 +363,12 @@ const store = createStore({
             reject(error);
           });
       });
+    },
+    logout: ({commit}) => {
+      // TODO: logout user
+      commit("setAuthJWT", "");
+      localStorage.removeItem("authToken");
+      instance.defaults.headers.common["Authorization"] = "";
     },
     getAllArticles: ({ commit }) => {
       return new Promise((resolve, reject) => {

@@ -33,6 +33,7 @@ function adminRouteGuard(to, from, next) {
   next({ name: "login" });
 }
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -48,6 +49,7 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         adminRouteGuard(to, from, next);
       },
+
     },
     {
       path: "/admin/articles",
@@ -72,11 +74,13 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         adminRouteGuard(to, from, next);
       },
+
     },
     {
       path: "/admin/forums/:id",
       name: "admin-forum-edit",
       component: AdminForumEditView,
+
       beforeEnter: (to, from, next) => {
         adminRouteGuard(to, from, next);
       },
@@ -119,6 +123,7 @@ const router = createRouter({
           next();
         }
       },
+
     },
     {
       path: "/articles",
@@ -158,6 +163,7 @@ const router = createRouter({
           next();
         }
       },
+
     },
     {
       path: "/forums",
@@ -197,6 +203,7 @@ const router = createRouter({
           next();
         }
       },
+
     },
     {
       path: "/tournament/:id",
