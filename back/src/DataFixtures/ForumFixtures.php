@@ -23,6 +23,7 @@ class ForumFixtures extends Fixture implements DependentFixtureInterface
                 ->setContent($faker->paragraph(10, true))
                 ->setCreatedBy($faker->randomElement($users))
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 year', 'now')))
+                ->setIsValid($faker->boolean(60))
             ;
             $manager->persist($object);   
         }

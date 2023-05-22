@@ -26,25 +26,8 @@ use Symfony\Component\Uid\Uuid;
     denormalizationContext: ['groups' => ['write_Forum']],
     paginationEnabled: false,
     order: ['createdAt' => 'DESC'],
-    uriVariables: [
-        'userId' => new Link(
-            fromClass: User::class,
-            fromProperty: 'forums'
-        )
-    ],
-)]
-#[Get(
-    normalizationContext: ['groups' => ['read_Forum']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[GetCollection(
-    normalizationContext: ['groups' => ['read_Forums']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
 )]
 #[Post(
-    normalizationContext: ['groups' => ['read_Forum']],
     denormalizationContext: ['groups' => ['write_Forum']],
     //security: "is_granted('ROLE_MODERATOR') or object == user",
     //securityMessage: 'Sorry, but you are not the article owner.'
@@ -56,12 +39,6 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[GetCollection(
     normalizationContext: ['groups' => ['read_Forums']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Post(
-    normalizationContext: ['groups' => ['read_Forum']],
-    denormalizationContext: ['groups' => ['write_Forum']],
     //security: "is_granted('ROLE_MODERATOR') or object == user",
     //securityMessage: 'Sorry, but you are not the article owner.'
 )]
@@ -73,7 +50,13 @@ use Symfony\Component\Uid\Uuid;
     uriTemplate: '/users/{userId}/forums.{_format}',
     normalizationContext: ['groups' => ['user:forums'],],
     security: "is_granted('ROLE_MODERATOR') or object == user",
-    securityMessage: 'Sorry, but you are not the owner.'
+    securityMessage: 'Sorry, but you are not the owner.',
+    uriVariables: [
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'forums'
+        )
+    ]
 )]
 class Forum
 {
@@ -172,9 +155,6 @@ class Forum
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
     public function getComments(): Collection
     {
         return $this->comments;
