@@ -60,6 +60,22 @@ use Gedmo\Mapping\Annotation\Blameable;
     security: "is_granted('ROLE_MODERATOR')",
     securityMessage: 'Sorry, but you are not the admin.'
 )]
+#[Post(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['get_article']],
+    denormalizationContext: ['groups' => ['post_article']],
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
 class Article
 {
     #[ORM\Id]
