@@ -7,22 +7,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthenticationSuccessListener
 {
+    /**
+     * @param AuthenticationSuccessEvent $event
+     */
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
+    {
+        $user = $event->getUser();
 
+        if (!$user instanceof UserInterface) {
+            return;
+        }
 
-/**
- * @param AuthenticationSuccessEvent $event
- */
-public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
-{
-    $data = $event->getData();
-    $user = $event->getUser();
-
-    if (!$user instanceof UserInterface) {
-        return;
+        if (!$user->isIsVerify()) {
+            throw new \Exception('User is not active');
+        }
     }
-
-    if (!$user->isIsVerify()) {
-        throw new \Exception('User is not active');
-    }
-}
 }

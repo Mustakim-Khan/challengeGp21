@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,10 +23,22 @@ use Symfony\Component\Uid\Uuid;
     denormalizationContext: ['groups' => ['write_Comment']],
     paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
+    uriVariables: [
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'comments'
+        )
+    ],
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'forum' => 'exact',
 ])]
+#[GetCollection(
+    uriTemplate: '/users/{userId}/comments.{_format}',
+    normalizationContext: ['groups' => ['user:comments'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the owner.'
+)]
 class Comment
 {
     #[ORM\Id]
@@ -35,26 +49,26 @@ class Comment
     private ?Uuid $id = null;
 
     #[ORM\Column]
-    #[Groups(['read_Comment'])]
+    #[Groups(['read_Comment', 'user:comments'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment'])]
+    #[Groups(['read_Comment', 'user:comments'])]
     #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment', 'write_Comment'])]
+    #[Groups(['read_Comment', 'write_Comment', 'user:comments'])]
     private ?Forum $forum = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Comment', 'write_Comment'])]
+    #[Groups(['read_Comment', 'write_Comment', 'user:comments'])]
     private ?string $content = null;
 
     #[ORM\OneToMany(mappedBy: 'comment', targetEntity: SignaledComment::class)]
-    #[Groups(['read_Comment'])]
+    #[Groups(['read_Comment', 'user:comments'])]
     private Collection $signaledComments;
 
     public function __construct()

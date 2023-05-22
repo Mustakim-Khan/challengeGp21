@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
@@ -15,7 +17,19 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(paginationEnabled: true)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Media']],
-    denormalizationContext: ['groups' => ['write_Media']]
+    denormalizationContext: ['groups' => ['write_Media']],
+    uriVariables: [
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'medias'
+        )
+    ],
+)]
+#[GetCollection(
+    uriTemplate: '/users/{userId}/medias.{_format}',
+    normalizationContext: ['groups' => ['user:medias'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the owner.'
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'owner' => 'exact',

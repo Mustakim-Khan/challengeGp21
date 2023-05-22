@@ -12,47 +12,63 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Link;
+use Gedmo\Mapping\Annotation\Blameable;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
-    paginationEnabled: true,
+    denormalizationContext: ['groups' => ['write_article']],
+    // paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
 )]
-#[Get(
-    normalizationContext: ['groups' => ['get_article']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
+#[ApiResource(
+    uriVariables: [
+    'userId' => new Link(
+        fromClass: User::class,
+        fromProperty: 'articles'
+    )],
 )]
+#[Get(normalizationContext: ['groups' => ['get_article']],)]
+#[GetCollection(normalizationContext: ['groups' => ['getc_article']],)]
 #[GetCollection(
-    normalizationContext: ['groups' => ['getc_article']],
-    //security: "is_granted('ROLE_ADMIN')",
-    //securityMessage: 'Sorry, but you are not the admin.'
+    uriTemplate: '/users/{userId}/articles.{_format}',
+    normalizationContext: ['groups' => ['user:articles'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the article owner.'
 )]
+#[Post(
+    denormalizationContext: ['groups' => ['write_article']],
+)]
+#[Patch(
+    denormalizationContext: ['groups' => ['update_article']],
+)]
+#[Delete()]
 class Article
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'user:articles'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Groups(['get_article', 'getc_article'])]
+    #[Groups(['get_article', 'getc_article', 'user:articles'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[Groups(['getc_article'])]
+    #[Groups(['getc_article', 'user:articles'])]
+    #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     public function __construct()

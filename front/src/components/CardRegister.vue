@@ -91,7 +91,7 @@ export default {
   },
   mounted() {
     // if (this.$store.state.user.id != "") {
-    if (this.$store.state.user != undefined) {
+    if (this.$store.state.user) {
       console.log(`user : ${this.$store.state.user}`);
       // this.$router.push({ name: "home" });
     }

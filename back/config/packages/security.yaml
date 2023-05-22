@@ -22,6 +22,12 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         
+        refresh:
+            pattern:  ^/api/token/refresh
+            stateless: true
+            provider: users
+            refresh_jwt: ~
+
         api:
             pattern: ^/api
             stateless: true
@@ -36,13 +42,6 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             jwt: ~
-
-        refresh:
-            pattern:  ^/api/token/refresh
-            stateless: true
-            provider: users
-            refresh_jwt: ~
-
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

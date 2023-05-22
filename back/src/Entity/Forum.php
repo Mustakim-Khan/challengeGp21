@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Link;
 use App\Repository\ForumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,31 +14,44 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Blameable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
-#[ApiResource(paginationEnabled: true)]
+#[ApiResource(paginationEnabled: false)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read_Forum']],
     denormalizationContext: ['groups' => ['write_Forum']],
-    paginationEnabled: true,
+    // paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
+    uriVariables: [
+        'userId' => new Link(
+            fromClass: User::class,
+            fromProperty: 'forums'
+        )
+    ],
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'isValid' => 'exact',
     'createdBy' => 'exact',
 ])]
+#[GetCollection(
+    uriTemplate: '/users/{userId}/forums.{_format}',
+    normalizationContext: ['groups' => ['user:forums'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the owner.'
+)]
 class Forum
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Forum'])]
+    #[Groups(['read_Forum', 'user:forums'])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'forums')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Forum'])]
+    #[Groups(['read_Forum', 'user:forums'])]
     #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 
@@ -46,19 +60,19 @@ class Forum
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read_Forum', 'read_Comment', 'write_Forum'])]
+    #[Groups(['read_Forum', 'read_Comment', 'write_Forum', 'user:forums'])]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Groups(['read_Forum','write_Forum'])]
+    #[Groups(['read_Forum','write_Forum', 'user:forums'])]
     private ?bool $isValid = false;
 
     #[ORM\OneToMany(mappedBy: 'forum', targetEntity: Comment::class)]
-    #[Groups(['read_Forum'])]
+    #[Groups(['read_Forum', 'user:forums'])]
     private Collection $comments;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Forum', 'write_Forum'])]
+    #[Groups(['read_Forum', 'write_Forum', 'user:forums'])]
     private ?string $content = null;
 
     public function __construct()

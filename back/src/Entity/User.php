@@ -31,8 +31,8 @@ use Symfony\Component\Uid\Uuid;
     paginationEnabled: true,
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'username' => 'partial',
-    'email' => 'partial',
+    'username' => 'exact',
+    'email' => 'exact',
 ])]
 #[Get(
     normalizationContext: ['groups' => ['get_user']],
@@ -66,9 +66,12 @@ use Symfony\Component\Uid\Uuid;
     denormalizationContext: ['groups' => ['updatePwd_user']],
     processor: UserPasswordHasher::class,
     security: "is_granted('ROLE_ADMIN') or object == user",
-    securityMessage: 'Sorry, but you have a right for this action.'
+    securityMessage: 'Sorry, but you don\'t have a right for this action.'
 )]
-
+#[ApiFilter(SearchFilter::class, properties: [
+    'username' => 'exact',
+    'email' => 'exact',
+])]
 #[UniqueEntity('username', message: 'Ce nom d\'utilisateur {{ value }} existe déjà.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -77,12 +80,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ApiProperty(identifier: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
+    #[Groups(['getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
     private ?Uuid $id = null;
     
     #[ORM\Column(length: 180, unique: true)]
     #[Asserts\NotBlank()]
-    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament'])]
+    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'get_article', 'getc_article'])]
     private ?string $username = null;
     
     #[ORM\Column]
@@ -92,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(['getc_user', 'write_user', 'update_user', 'updatePwd_user'])]
+    #[Groups(['write_user', 'update_user', 'updatePwd_user'])]
     private ?string $password = null;
     
     #[ORM\Column(length: 255, nullable: true)]
@@ -100,34 +103,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $token = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_user', 'write_user', 'update_user'])]
+    #[Groups(['get_user', 'getc_user', 'write_user', 'update_user'])]
     private ?string $email = null;
-
+    
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Comment::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $comments;
-
+    
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: Clip::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $clips;
-
+    
     #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'participants')]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $tournaments;
-
+    
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Tournament::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $createdTournaments;
-
+    
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Article::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $articles;
-
+    
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Media::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $medias;
-
+    
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Forum::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $forums;
-
+    
     #[ORM\OneToMany(mappedBy: 'signaledBy', targetEntity: SignaledComment::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $signaledComments;
-
+    
     #[ORM\OneToMany(mappedBy: 'signaledUser', targetEntity: SignaledComment::class)]
+    #[Groups(['get_user', 'getc_user'])]
     private Collection $mySignaledComments;
 
     #[ORM\Column(nullable: true)]
