@@ -9,6 +9,9 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\ForumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,49 +25,52 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ForumRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read_Forum']],
-    denormalizationContext: ['groups' => ['write_Forum']],
-    paginationEnabled: false,
     order: ['createdAt' => 'DESC'],
 )]
-#[Post(
-    denormalizationContext: ['groups' => ['write_Forum']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Get(
-    normalizationContext: ['groups' => ['read_Forum']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
+#[Get(normalizationContext: ['groups' => ['read_Forum']],)]
 #[GetCollection(
     normalizationContext: ['groups' => ['read_Forums']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
 )]
-#[ApiFilter(SearchFilter::class, properties: [
-    'isValid' => 'exact',
-    'createdBy' => 'exact',
-])]
 #[GetCollection(
-    uriTemplate: '/users/{userId}/forums.{_format}',
-    normalizationContext: ['groups' => ['user:forums'],],
-    security: "is_granted('ROLE_MODERATOR') or object == user",
-    securityMessage: 'Sorry, but you are not the owner.',
     uriVariables: [
         'userId' => new Link(
             fromClass: User::class,
             fromProperty: 'forums'
         )
-    ]
+    ],
+    uriTemplate: '/users/{userId}/forums.{_format}',
+    normalizationContext: ['groups' => ['user:forums'],],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the owner.'
 )]
+#[Post(
+    denormalizationContext: ['groups' => ['write_Forum']],
+)]
+#[Put(
+    denormalizationContext: ['groups' => ['update_forum']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you have a wrong right to access this ressource.'
+)]
+#[Patch(
+    denormalizationContext: ['groups' => ['update_forum']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you have a wrong right to access this ressource.'
+)]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR')",
+    securityMessage: 'Sorry, but you have a wrong right to access this ressource.'
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'isValid' => 'exact',
+    'createdBy' => 'exact',
+])]
 class Forum
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Forum', 'user:forums', 'read_Forums'])]
+    #[Groups(['read_Forum', 'read_Forums', 'user:forums',])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'forums')]
@@ -79,20 +85,19 @@ class Forum
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read_Forum', 'read_Comment', 'write_Forum', 'user:forums', 'read_Forums'])]
+    #[Groups(['read_Forum', 'read_Forums', 'write_Forum',  'update_forum', 'user:forums', 'read_Comment'])]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Groups(['read_Forum','write_Forum', 'user:forums', 'read_Forums'])]
-
+    #[Groups(['read_Forum', 'read_Forums', 'update_forum', 'user:forums'])]
     private ?bool $isValid = false;
 
     #[ORM\OneToMany(mappedBy: 'forum', targetEntity: Comment::class)]
-    #[Groups(['read_Forum', 'user:forums'])]
+    #[Groups(['read_Forum', 'read_Forums', 'user:forums'])]
     private Collection $comments;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Forum', 'write_Forum', 'user:forums'])]
+    #[Groups(['read_Forum', 'read_Forums', 'write_Forum', 'update_forum', 'user:forums'])]
     private ?string $content = null;
 
     public function __construct()
@@ -155,6 +160,9 @@ class Forum
         return $this;
     }
 
+    /**
+     * @return Collection<int, Comment>
+     */
     public function getComments(): Collection
     {
         return $this->comments;

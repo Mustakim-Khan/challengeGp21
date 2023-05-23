@@ -84,7 +84,7 @@ export default {
           .dispatch(this.datas.routes.deleteAction, itemObject)
           .then((response) => {
             if (response) {
-              this.tableName = this.datas.tablesName;
+              this.tableName = this.datas.tableName;
               this.tableHeaders = this.datas.tableHeaders;
               this.tableContents = this.datas.tablesContents;
               // Update UserDashboard datas

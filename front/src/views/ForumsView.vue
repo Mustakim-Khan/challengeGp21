@@ -30,8 +30,8 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("getValidForums").then(() => {
-      this.forums = this.getForums;
+    this.$store.dispatch("getValidForums").then((response) => {
+      this.forums = response.data;
     });
   },
   methods: {

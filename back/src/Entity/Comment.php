@@ -9,6 +9,9 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,65 +23,50 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read_Comment', 'read_Forum', 'read_Forums']],
-    denormalizationContext: ['groups' => ['write_Comment']],
-    paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
+)]
+#[Get(normalizationContext: ['groups' => ['read_Comment']])]
+#[GetCollection(normalizationContext: ['groups' => ['read_Comments']])]
+#[GetCollection(
     uriVariables: [
         'userId' => new Link(
             fromClass: User::class,
             fromProperty: 'comments'
         )
     ],
-)]
-#[GetCollection(
-    normalizationContext: ['groups' => ['read_Comments']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Get(
-    normalizationContext: ['groups' => ['read_Comment']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Post(
-    normalizationContext: ['groups' => ['read_Comment']],
-    denormalizationContext: ['groups' => ['write_Comment']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[GetCollection(
-    normalizationContext: ['groups' => ['read_Comments']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Get(
-    normalizationContext: ['groups' => ['read_Comment']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[Post(
-    normalizationContext: ['groups' => ['read_Comment']],
-    denormalizationContext: ['groups' => ['write_Comment']],
-    //security: "is_granted('ROLE_MODERATOR') or object == user",
-    //securityMessage: 'Sorry, but you are not the article owner.'
-)]
-#[ApiFilter(SearchFilter::class, properties: [
-    'forum' => 'exact',
-])]
-#[GetCollection(
     uriTemplate: '/users/{userId}/comments.{_format}',
     normalizationContext: ['groups' => ['user:comments'],],
     security: "is_granted('ROLE_MODERATOR') or object == user",
     securityMessage: 'Sorry, but you are not the owner.'
 )]
+#[Post(
+    normalizationContext: ['groups' => ['read_Comment']],
+    denormalizationContext: ['groups' => ['write_Comment']]
+)]
+#[Put(
+    denormalizationContext: ['groups' => ['update_Comment']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Patch(
+    denormalizationContext: ['groups' => ['update_Comment']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'forum' => 'exact',
+])]
 class Comment
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['read_Comment', 'read_Forum'])]
+    #[Groups(['read_Comment', 'read_Comments', 'read_Forum'])]
     private ?Uuid $id = null;
 
     #[ORM\Column]
@@ -87,21 +75,21 @@ class Comment
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment', 'read_Comments','user:comments', 'read_Forum'])]
+    #[Groups(['read_Comment', 'read_Comments', 'read_Forum', 'user:comments'])]
     #[Gedmo\Blameable(on: 'create')]
     private ?User $createdBy = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Comment', 'write_Comment', 'read_Comments', 'user:comments'])]
+    #[Groups(['read_Comment', 'write_Comment', 'update_Comment', 'read_Comments', 'user:comments'])]
     private ?Forum $forum = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read_Comment', 'write_Comment', 'read_Comments', 'user:comments', 'read_Forum'])]
+    #[Groups(['read_Comment', 'write_Comment', 'update_Comment', 'read_Comments', 'user:comments', 'read_Forum'])]
     private ?string $content = null;
 
     #[ORM\OneToMany(mappedBy: 'comment', targetEntity: SignaledComment::class)]
-    #[Groups(['read_Comment', 'user:comments'])]
+    #[Groups(['read_Comment', 'read_Comments', 'user:comments'])]
     private Collection $signaledComments;
 
     public function __construct()

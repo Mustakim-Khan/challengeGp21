@@ -68,10 +68,6 @@ use Symfony\Component\Uid\Uuid;
     security: "is_granted('ROLE_ADMIN') or object == user",
     securityMessage: 'Sorry, but you don\'t have a right for this action.'
 )]
-#[ApiFilter(SearchFilter::class, properties: [
-    'username' => 'exact',
-    'email' => 'exact',
-])]
 #[UniqueEntity('username', message: 'Ce nom d\'utilisateur {{ value }} existe déjà.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -80,12 +76,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ApiProperty(identifier: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'read_Comments', 'getc_article'])]
+    #[Groups(['getc_user','read_Forum', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'read_Comments', 'getc_article', 'getc_Tournament'])]
     private ?Uuid $id = null;
     
     #[ORM\Column(length: 180, unique: true)]
     #[Asserts\NotBlank()]
-    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum','read_Forums', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'get_article', 'getc_article', 'read_Comments'])]
+    #[Groups(['get_user', 'write_user', 'getc_user','update_user','read_Forum','read_Forums', 'read_Comment', 'read_Media', 'read_Clip', 'read_Tournament', 'get_article', 'getc_article', 'read_Comments', 'getc_Tournament'])]
     private ?string $username = null;
     
     #[ORM\Column]

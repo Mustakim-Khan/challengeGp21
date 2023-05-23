@@ -227,7 +227,7 @@ export default {
           return {
             datas: article,
             title: article.title,
-            createdat: article.createdAt.split("T").join(" à "),
+            createdat: article.createdAt.split("+")[0],
           };
         }),
       };
@@ -260,6 +260,7 @@ export default {
     },
     updateTablesDatas(datasUpdated) {
       // Use in crudTables after each item been deleted
+      console.log("Delete => ", datasUpdated);
       switch (datasUpdated.tableName) {
         case "Articles":
           this.dispatchUserArticles(this.$store.getters.getCurrentUser.id);
