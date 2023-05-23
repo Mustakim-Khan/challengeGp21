@@ -227,7 +227,7 @@ export default {
           return {
             datas: article,
             title: article.title,
-            createdat: article.createdAt.split("T").join(" à "),
+            createdat: article.createdAt.split("+")[0],
           };
         }),
       };
@@ -260,6 +260,7 @@ export default {
     },
     updateTablesDatas(datasUpdated) {
       // Use in crudTables after each item been deleted
+      console.log("Delete => ", datasUpdated);
       switch (datasUpdated.tableName) {
         case "Articles":
           this.dispatchUserArticles(this.$store.getters.getCurrentUser.id);
@@ -277,7 +278,6 @@ export default {
     },
   },
   mounted() {
-    console.log("UserDashBoard | Mounted ...");
     this.$store
       .dispatch("updateUserDatas", {
         username: this.$store.getters.getCurrentUser.username,
@@ -290,21 +290,6 @@ export default {
           this.dispatchUserComments(this.$store.getters.getCurrentUser.id);
         }
       });
-    console.log("UserDashBoard | Mounted | My user datas set updated !");
-  },
-  watch: {
-    myArticles(newValue, oldValue) {
-      console.log(
-        "UserDashbord | Watch | myArticles have been updated | New value => ",
-        newValue
-      );
-    },
-    myForums(newValue, oldValue) {
-      console.log(
-        "UserDashbord | Watch | myForums have been updated | New value => ",
-        newValue
-      );
-    },
   },
 };
 </script>

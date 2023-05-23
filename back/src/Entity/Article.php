@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Get;
@@ -12,39 +13,44 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Link;
 use Gedmo\Mapping\Annotation\Blameable;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
-    denormalizationContext: ['groups' => ['write_article']],
-    // paginationEnabled: true,
     order: ['createdAt' => 'DESC'],
 )]
-#[ApiResource(
+#[Get(normalizationContext: ['groups' => ['get_article']],)]
+#[GetCollection(normalizationContext: ['groups' => ['getc_article']])]
+#[GetCollection(
     uriVariables: [
     'userId' => new Link(
         fromClass: User::class,
         fromProperty: 'articles'
     )],
-)]
-#[Get(normalizationContext: ['groups' => ['get_article']],)]
-#[GetCollection(normalizationContext: ['groups' => ['getc_article']],)]
-#[GetCollection(
     uriTemplate: '/users/{userId}/articles.{_format}',
     normalizationContext: ['groups' => ['user:articles'],],
     security: "is_granted('ROLE_MODERATOR') or object == user",
     securityMessage: 'Sorry, but you are not the article owner.'
 )]
-#[Post(
-    denormalizationContext: ['groups' => ['write_article']],
+#[Post(denormalizationContext: ['groups' => ['post_article']])]
+#[Put(
+    denormalizationContext: ['groups' => ['update_article']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
 )]
 #[Patch(
     denormalizationContext: ['groups' => ['update_article']],
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
 )]
-#[Delete()]
+#[Delete(
+    security: "is_granted('ROLE_MODERATOR') or object == user",
+    securityMessage: 'Sorry, but you are not the admin.'
+)]
 class Article
 {
     #[ORM\Id]
@@ -55,19 +61,20 @@ class Article
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
+    #[Groups(['get_article', 'post_article', 'getc_article', 'update_article', 'user:articles'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['get_article', 'getc_article', 'write_article', 'update_article', 'user:articles'])]
+    #[Groups(['get_article', 'post_article', 'getc_article', 'update_article', 'user:articles'])]
     private ?string $content = null;
 
     #[ORM\Column]
     #[Groups(['get_article', 'getc_article', 'user:articles'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC822])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[Groups(['getc_article', 'user:articles'])]
+    #[Groups(['get_article', 'getc_article', 'user:articles'])]
     #[Blameable(on: 'create')]
     private ?User $createdBy = null;
 

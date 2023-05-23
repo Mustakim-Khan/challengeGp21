@@ -70,9 +70,9 @@ export default {
         });
         return;
       }
-      // this.$store.dispatch("updateArticle", this.article).then(() => {
-      //   this.navigate("user-dashboard");
-      // });
+      this.$store.dispatch("updateArticle", this.article).then(() => {
+        this.navigate("user-dashboard");
+      });
     },
   },
 };

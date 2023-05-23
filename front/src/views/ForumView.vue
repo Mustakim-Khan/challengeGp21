@@ -18,9 +18,9 @@
       <v-btn rounded="lg" @click="createComment()" color="success">
         Send comment
       </v-btn>
-      <div v-if="comments.length > 0">
+      <div v-if="forum.comments.length > 0">
         <v-list
-          v-for="comment in comments"
+          v-for="comment in forum.comments"
           :key="comment.id"
           lines="three"
           class="text-left"
@@ -28,8 +28,8 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                {{ comment.createdBy.username }}</v-list-item-title
-              >
+                {{ comment.createdBy.username }}
+              </v-list-item-title>
               <v-list-item-subtitle>
                 {{ comment.content }}
               </v-list-item-subtitle>
@@ -49,15 +49,13 @@ export default {
     forum: {
       title: "",
       content: "",
+      comments: [],
     },
-    comments: [],
     comment: "",
   }),
   mounted() {
-    this.$store.dispatch("getAllForums").then(() => {
-      this.forum = this.getForums.find(
-        (forum) => forum.id == this.$route.params.id
-      );
+    this.$store.dispatch("getForum", this.$route.params.id).then((response) => {
+      this.forum = response.data;
     });
     this.$store.dispatch("getAllComments", this.$route.params.id).then(() => {
       this.comments = this.getComments;
@@ -74,10 +72,15 @@ export default {
       this.$router.go(-1);
     },
     createComment() {
-      this.$store.dispatch("createComment", {
-        content: this.comment,
-        forum: "/forums/" + this.$route.params.id,
-      });
+      this.$store
+        .dispatch("createComment", {
+          content: this.comment,
+          forum: "/api/forums/" + this.$route.params.id,
+        })
+        .then((response) => {
+          this.forum.comments.push(response.data);
+          this.comment = "";
+        });
     },
   },
 };

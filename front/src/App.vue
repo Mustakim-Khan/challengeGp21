@@ -1,7 +1,7 @@
 <script setup>
 import { RouterView } from "vue-router"; // <--- import RouterLink
 import NavBar from "./components/NavBar.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import jwtDecode from "jwt-decode";
 
@@ -42,18 +42,18 @@ onMounted(() => {
   }
 });
 
-watch([user], ([user], [prevUser]) => {
-  if (user != null && typeof user != "string") {
-    if (user !== prevUser) {
-      console.log(
-        "App.vue | prevUser : ",
-        prevUser,
-        " \n\t\t newUser : ",
-        user
-      );
-    }
-  }
-});
+// watch([user], ([user], [prevUser]) => {
+//   if (user != null && typeof user != "string") {
+//     if (user !== prevUser) {
+//       console.log(
+//         "App.vue | prevUser : ",
+//         prevUser,
+//         " \n\t\t newUser : ",
+//         user
+//       );
+//     }
+//   }
+// });
 </script>
 
 <template>

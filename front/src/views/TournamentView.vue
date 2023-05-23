@@ -61,14 +61,12 @@ export default {
     },
     sponsorTournament() {
       // TODO si l'utilisateur courant est un sponsor
-      console.log('sponsorTournament()')
     },
-    joinTournament() { 
-      console.log('joinTournament()')
+    joinTournament() {
       // TODO si utilisateur courant n'est pas encore dans le tournoi (admi et modo peuvent s'incrire)
       if (this.tournament.participants) {
         this.tournament.participants.forEach(p => {
-          console.log(p)
+         // TODO si l'utilisateur courant est déjà dans le tournoi
         });
       }
     },

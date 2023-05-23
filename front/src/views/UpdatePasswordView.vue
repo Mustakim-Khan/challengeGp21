@@ -97,9 +97,7 @@ export default {
                 })
                 .then(
                   (response) => {
-                    if (response.status === 200) {
-                      console.log("Reset Pwd done");
-                    } else {
+                    if (response.status !== 200) {
                       console.log("Reset Pwd failed: ", response);
                     }
                   },
@@ -115,14 +113,11 @@ export default {
         );
     },
     forgetPwd() {
-      this.$store.dispatch("forgetPassword", { email: this.email }).then(
-        (response) => {
-          console.log(`Forget Pwd : ${response}`);
-        },
-        (error) => {
+      this.$store
+        .dispatch("forgetPassword", { email: this.email })
+        .then((error) => {
           console.log(`Forget Pwd : ${error}`);
-        }
-      );
+        });
     },
     required(value) {
       if (value) {

@@ -92,7 +92,6 @@ export default {
   mounted() {
     // if (this.$store.state.user.id != "") {
     if (this.$store.state.user) {
-      console.log(`user : ${this.$store.state.user}`);
       // this.$router.push({ name: "home" });
     }
   },
@@ -118,7 +117,6 @@ export default {
         })
         .then(
           (response) => {
-            console.log(response);
             this.navigateTo("login");
           },
           (error) => {

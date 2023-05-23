@@ -23,6 +23,7 @@ class UserFixtures extends Fixture
             ->setUsername('user')
             ->setPassword($pwd)
             ->setRoles(['ROLE_USER'])
+            ->setIsVerify(true)
         ;
         $manager->persist($object);
 
@@ -32,6 +33,7 @@ class UserFixtures extends Fixture
             ->setUsername('moderator')
             ->setPassword($pwd)
             ->setRoles(['ROLE_MODERATOR'])
+            ->setIsVerify(true)
         ;
         $manager->persist($object);
 
@@ -41,6 +43,7 @@ class UserFixtures extends Fixture
             ->setUsername('admin')
             ->setPassword($pwd)
             ->setRoles(['ROLE_ADMIN'])
+            ->setIsVerify(true)
         ;
         $manager->persist($object);
 
@@ -50,6 +53,7 @@ class UserFixtures extends Fixture
                 ->setUsername($faker->userName)
                 ->setPassword($pwd)
                 ->setRoles($faker->randomElements($roles, 1))
+                ->setIsVerify($faker->boolean)
             ;
             $manager->persist($object);
         }

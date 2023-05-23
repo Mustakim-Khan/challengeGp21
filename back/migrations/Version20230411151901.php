@@ -10,16 +10,17 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230118170814 extends AbstractMigration
+final class Version20230411151901 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Version 0 : All tables';
+        return '';
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE refresh_tokens_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE article (id UUID NOT NULL, created_by_id UUID DEFAULT NULL, title VARCHAR(255) NOT NULL, content TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_23A0E66B03A8386 ON article (created_by_id)');
         $this->addSql('COMMENT ON COLUMN article.id IS \'(DC2Type:uuid)\'');
@@ -46,6 +47,8 @@ final class Version20230118170814 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_6A2CA10C7E3C61F9 ON media (owner_id)');
         $this->addSql('COMMENT ON COLUMN media.id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN media.owner_id IS \'(DC2Type:uuid)\'');
+        $this->addSql('CREATE TABLE refresh_tokens (id INT NOT NULL, refresh_token VARCHAR(128) NOT NULL, username VARCHAR(255) NOT NULL, valid TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
         $this->addSql('CREATE TABLE signaled_comment (id UUID NOT NULL, signaled_by_id UUID NOT NULL, signaled_user_id UUID NOT NULL, comment_id UUID NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_693ABA496226B1BA ON signaled_comment (signaled_by_id)');
         $this->addSql('CREATE INDEX IDX_693ABA495A203BB0 ON signaled_comment (signaled_user_id)');
@@ -54,7 +57,7 @@ final class Version20230118170814 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN signaled_comment.signaled_by_id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN signaled_comment.signaled_user_id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN signaled_comment.comment_id IS \'(DC2Type:uuid)\'');
-        $this->addSql('CREATE TABLE tournament (id UUID NOT NULL, created_by_id UUID NOT NULL, max_players INT NOT NULL, is_free BOOLEAN NOT NULL, is_over BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, participation_deadline DATE NOT NULL, start_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE tournament (id UUID NOT NULL, created_by_id UUID NOT NULL, max_players INT NOT NULL, is_free BOOLEAN NOT NULL, is_over BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, participation_deadline DATE NOT NULL, start_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_BD5FB8D9B03A8386 ON tournament (created_by_id)');
         $this->addSql('COMMENT ON COLUMN tournament.id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN tournament.created_by_id IS \'(DC2Type:uuid)\'');
@@ -66,21 +69,9 @@ final class Version20230118170814 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_BA1E6477A76ED395 ON tournament_user (user_id)');
         $this->addSql('COMMENT ON COLUMN tournament_user.tournament_id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN tournament_user.user_id IS \'(DC2Type:uuid)\'');
-        $this->addSql('CREATE TABLE "user" (id UUID NOT NULL, username VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, token VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id UUID NOT NULL, username VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, token VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, is_verify BOOLEAN DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON "user" (username)');
         $this->addSql('COMMENT ON COLUMN "user".id IS \'(DC2Type:uuid)\'');
-        $this->addSql('CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0 ON messenger_messages (queue_name)');
-        $this->addSql('CREATE INDEX IDX_75EA56E0E3BD61CE ON messenger_messages (available_at)');
-        $this->addSql('CREATE INDEX IDX_75EA56E016BA31DB ON messenger_messages (delivered_at)');
-        $this->addSql('CREATE OR REPLACE FUNCTION notify_messenger_messages() RETURNS TRIGGER AS $$
-            BEGIN
-                PERFORM pg_notify(\'messenger_messages\', NEW.queue_name::text);
-                RETURN NEW;
-            END;
-        $$ LANGUAGE plpgsql;');
-        $this->addSql('DROP TRIGGER IF EXISTS notify_trigger ON messenger_messages;');
-        $this->addSql('CREATE TRIGGER notify_trigger AFTER INSERT OR UPDATE ON messenger_messages FOR EACH ROW EXECUTE PROCEDURE notify_messenger_messages();');
         $this->addSql('ALTER TABLE article ADD CONSTRAINT FK_23A0E66B03A8386 FOREIGN KEY (created_by_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE clip ADD CONSTRAINT FK_AD201467A2B28FE8 FOREIGN KEY (uploaded_by_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE comment ADD CONSTRAINT FK_9474526CB03A8386 FOREIGN KEY (created_by_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -99,6 +90,7 @@ final class Version20230118170814 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE refresh_tokens_id_seq CASCADE');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E66B03A8386');
         $this->addSql('ALTER TABLE clip DROP CONSTRAINT FK_AD201467A2B28FE8');
         $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526CB03A8386');
@@ -116,10 +108,10 @@ final class Version20230118170814 extends AbstractMigration
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE forum');
         $this->addSql('DROP TABLE media');
+        $this->addSql('DROP TABLE refresh_tokens');
         $this->addSql('DROP TABLE signaled_comment');
         $this->addSql('DROP TABLE tournament');
         $this->addSql('DROP TABLE tournament_user');
         $this->addSql('DROP TABLE "user"');
-        $this->addSql('DROP TABLE messenger_messages');
     }
 }
