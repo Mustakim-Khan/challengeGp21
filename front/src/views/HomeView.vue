@@ -34,7 +34,7 @@
       </SliderItem>
     </div>
 
-    <div v-if="this.forums.length > 0">
+    <div v-if="this.clips.length > 0">
       <SliderItem title="New clips" :items="getClipsOrder()" linkMore="clips">
         <template v-slot:sliderContent="{ item, selectedClass }">
           <video-player
