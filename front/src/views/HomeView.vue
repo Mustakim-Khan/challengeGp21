@@ -38,19 +38,19 @@
         </SliderItem>
       </div>
       <div v-if="this.clips">
-      <SliderItem title="New clips" :items="getClipsOrder()" linkMore="clips">
-        <template v-slot:sliderContent="{ item, selectedClass }">
-          <video-player
-            :class="['ma-4', selectedClass]"
-            :src="item.path"
-            controls
-            disablePictureInPicture
-            responsive
-            height="200"
-          />
-        </template>
-      </SliderItem>
-    </div>
+        <SliderItem title="New clips" :items="getClipsOrder()" linkMore="clips">
+          <template v-slot:sliderContent="{ item, selectedClass }">
+            <video-player
+              :class="['ma-4', selectedClass]"
+              :src="item.path"
+              controls
+              disablePictureInPicture
+              responsive
+              height="200"
+            />
+          </template>
+        </SliderItem>
+      </div>
     </v-container>
   </div>
 </template>
