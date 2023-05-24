@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -24,12 +26,6 @@ use ApiPlatform\OpenApi\Model;
 )]
 #[GetCollection(
     uriTemplate: '/clips',
-    paginationEnabled: true,
-    paginationItemsPerPage: 10,
-    normalizationContext: ['groups' => ['read_Clips']],
-)]
-#[GetCollection(
-    uriTemplate: '/clips/valid',
     paginationEnabled: true,
     paginationItemsPerPage: 10,
     normalizationContext: ['groups' => ['read_Clips']],
@@ -59,6 +55,7 @@ use ApiPlatform\OpenApi\Model;
         )
     )
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['isValid'])]
 class Clip
 {
     #[ORM\Id]
@@ -85,7 +82,7 @@ class Clip
     private ?User $uploadedBy = null;
 
     #[ORM\Column]
-    #[Groups(['read_Clip'])]
+    #[Groups(['read_Clip', 'read_Clips'])]
     private ?bool $isValid = false;
 
     #[ORM\Column(length: 255)]
