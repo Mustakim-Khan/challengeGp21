@@ -40,14 +40,7 @@
       <div v-if="this.clips">
         <SliderItem title="New clips" :items="getClipsOrder()" linkMore="clips">
           <template v-slot:sliderContent="{ item, selectedClass }">
-            <video-player
-              :class="['ma-4', selectedClass]"
-              :src="item.path"
-              controls
-              disablePictureInPicture
-              responsive
-              height="200"
-            />
+            <CardClip :class="['ma-4', selectedClass]" :clip="item"></CardClip>
           </template>
         </SliderItem>
       </div>
@@ -57,6 +50,7 @@
 
 <script>
 import CardArticle from "../components/CardArticle.vue";
+import CardClip from "../components/CardClip.vue";
 import CardForum from "../components/CardForum.vue";
 import SliderItem from "../components/SliderItem.vue";
 import { mapGetters } from "vuex";
@@ -70,7 +64,7 @@ export default {
       clips: [],
     };
   },
-  components: { CardArticle, SliderItem, CardForum },
+  components: { CardArticle, SliderItem, CardForum, CardClip },
   computed: {
     ...mapGetters(["getArticles", "getForums", "getClips"]),
   },
@@ -117,7 +111,7 @@ export default {
         this.$store.dispatch("getValidForums").then(() => {
           this.forums = this.getForums;
         });
-        this.$store.dispatch("getAllClip").then(() => {
+        this.$store.dispatch("getClipValid").then(() => {
           this.clips = this.getClips;
         });
         console.log(`Home.vue | Mounted | User updated => ${this.user}`);

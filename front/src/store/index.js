@@ -202,7 +202,7 @@ const store = createStore({
     },
     getClips: (state) => {
       return state.clips;
-    }
+    },
   },
   actions: {
     createAccount: ({ commit }, userInfo) => {
@@ -584,6 +584,42 @@ const store = createStore({
           })
           .catch((error) => {
             reject(error);
+          });
+      });
+    },
+    getClipValid: ({ commit }) => {
+      return new Promise((resolve, reject) => {
+        instance
+          .get("/api/clips?isValid=true")
+          .then((response) => {
+            commit("setClips", response.data);
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    createClip: ({ commit }, clip) => {
+      return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append("title", clip.title);
+        formData.append("file", clip.file[0], clip.file[0].name);
+
+        instance
+          .post("/api/clips/video", clip)
+          .then((response) => {
+            commit;
+            resolve({
+              status: response.status,
+              message: response.data.message,
+            });
+          })
+          .catch((error) => {
+            reject({
+              status: error.response.status,
+              message: error.response.data.message,
+            });
           });
       });
     },

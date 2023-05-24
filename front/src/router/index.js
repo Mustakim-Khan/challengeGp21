@@ -17,6 +17,8 @@ import ForumEdit from "../views/ForumEditView.vue";
 import ArticleEdit from "../views/ArticleEditView.vue";
 import ClipsView from "../views/ClipsView.vue";
 import store from "../store";
+import ClipsEditView from "../views/ClipsEditView.vue";
+import AdminClipsView from "../views/Admin/AdminClipsView.vue";
 
 function adminRouteGuard(to, from, next) {
   store.dispatch("fetchAccessToken");
@@ -34,7 +36,6 @@ function adminRouteGuard(to, from, next) {
   next({ name: "login" });
 }
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -50,7 +51,6 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         adminRouteGuard(to, from, next);
       },
-
     },
     {
       path: "/admin/articles",
@@ -69,13 +69,17 @@ const router = createRouter({
       },
     },
     {
+      path: "/admin/clips",
+      name: "admin-clips",
+      component: AdminClipsView,
+    },
+    {
       path: "/admin/forums",
       name: "admin-forums",
       component: AdminForumsView,
       beforeEnter: (to, from, next) => {
         adminRouteGuard(to, from, next);
       },
-
     },
     {
       path: "/admin/forums/:id",
@@ -124,7 +128,6 @@ const router = createRouter({
           next();
         }
       },
-
     },
     {
       path: "/articles",
@@ -164,7 +167,6 @@ const router = createRouter({
           next();
         }
       },
-
     },
     {
       path: "/forums",
@@ -204,7 +206,6 @@ const router = createRouter({
           next();
         }
       },
-
     },
     {
       path: "/tournament/:id",
@@ -230,6 +231,18 @@ const router = createRouter({
         } else {
           next();
         }
+      },
+    },
+    {
+      path: "/clip/edit/:id",
+      name: "clip-edit",
+      component: ClipsEditView,
+      beforeEnter: (to, from, next) => {
+        store.dispatch("fetchAccessToken");
+        if (!store.state.authToken || !store.state.user) {
+          next("/login");
+        }
+        next();
       },
     },
     {
