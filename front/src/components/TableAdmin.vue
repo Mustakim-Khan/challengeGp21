@@ -11,7 +11,7 @@
         <th v-for="header in headers" :key="header.value" class="text-left">
           {{ header.name }}
         </th>
-        <th class="text-left">Actions</th>
+        <th v-if="routeEdit || actionDelete" class="text-left">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -33,10 +33,18 @@
           </span>
         </td>
         <td>
-          <v-btn color="primary" @click="linkEdit(routeEdit, object.id)">
+          <v-btn
+            v-if="routeEdit"
+            color="primary"
+            @click="linkEdit(routeEdit, object.id)"
+          >
             Edit
           </v-btn>
-          <v-btn color="error" @click="deleteItem(actionDelete, object)">
+          <v-btn
+            v-if="actionDelete"
+            color="error"
+            @click="deleteItem(actionDelete, object)"
+          >
             Delete
           </v-btn>
         </td>
@@ -58,11 +66,11 @@ export default {
     },
     routeEdit: {
       type: String,
-      required: true,
+      required: false,
     },
     actionDelete: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   methods: {

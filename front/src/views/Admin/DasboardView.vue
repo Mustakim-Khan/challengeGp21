@@ -14,6 +14,12 @@
           @click="navigateTo('admin-articles')"
         ></v-list-item>
         <v-list-item
+          prepend-icon="mdi-video"
+          append-icon="mdi-chevron-right"
+          title="Clips"
+          @click="navigateTo('admin-clips')"
+        ></v-list-item>
+        <v-list-item
           prepend-icon="mdi-forum"
           append-icon="mdi-chevron-right"
           title="Forums"
