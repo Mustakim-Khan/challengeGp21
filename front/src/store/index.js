@@ -28,8 +28,6 @@ instance.interceptors.response.use(
       const { status, data } = await instance.post("/api/token/refresh", {
         refresh_token: localStorage.getItem("refreshToken"),
       });
-      console.log("Refreshing token ... | status => ", status);
-      console.log("Refreshing token ... | data => ", data);
       if (status === 200) {
         // set refresh at true
         refresh = true;
@@ -41,7 +39,6 @@ instance.interceptors.response.use(
         error.config.headers["Authorization"] = `Bearer ${data.token}`;
         // update data in storage
         localStorage.setItem("authToken", data.token);
-        console.log("Refresh token done ! ");
         // Execute last request
         return instance(error.config);
       }
